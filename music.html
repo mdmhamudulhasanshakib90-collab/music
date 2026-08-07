@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend's Voice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================
+           1. SPOTIFY BRAND COLOR SCHEME & RESET
+           ========================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --spotify-black: #000000;
+            --spotify-base: #121212;
+            --spotify-card: #181818;
+            --spotify-card-hover: #282828;
+            --spotify-green: #1ed760;
+            --spotify-green-hover: #1fdf64;
+            --spotify-gray-text: #b3b3b3;
+            --spotify-light-gray: #242424;
+            --spotify-border: #282828;
+            --spotify-white: #ffffff;
+            --transition-fast: all 0.2s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--spotify-black);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 1fr 90px;
+            overflow: hidden;
+        }
+
+        /* ==========================================
+           2. APPLICATION LAYOUT
+           ========================================== */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 8px;
+            padding: 8px 8px 0 8px;
+            height: calc(100vh - 90px);
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: var(--spotify-base);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--spotify-white);
+            letter-spacing: -0.5px;
+        }
+
+        .spotify-icon-svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--spotify-green);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--spotify-gray-text);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--spotify-white);
+        }
+
+        .nav-item.active {
+            color: var(--spotify-green);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
+
+        .library-box {
+            background-color: var(--spotify-light-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: auto;
+        }
+
+        .library-box h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .library-box p {
+            font-size: 0.8rem;
+            color: var(--spotify-gray-text);
+        }
+
+        /* Main View Header & Content */
+        .main-view {
+            background: linear-gradient(180deg, #103922 0%, var(--spotify-base) 300px);
+            border-radius: 8px;
+            overflow-y: auto;
+            padding: 24px 32px;
+        }
+
+        /* Top Bar with Search */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border-radius: 50px;
+            background: var(--spotify-light-gray);
+            border: 1px solid transparent;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition-fast);
+        }
+
+        .search-box input:focus {
+            border-color: var(--spotify-green);
+            background: #2a2a2a;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--spotify-gray-text);
+            font-size: 0.9rem;
+        }
+
+        /* Playlist Banner */
+        .playlist-banner {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .album-art {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #059669, var(--spotify-green));
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .album-art svg {
+            width: 80px;
+            height: 80px;
+            fill: #ffffff;
+        }
+
+        .banner-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--spotify-green);
+        }
+
+        .banner-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1;
+        }
+
+        .banner-meta {
+            font-size: 0.85rem;
+            color: var(--spotify-gray-text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .banner-meta strong {
+            color: var(--spotify-white);
+        }
+
+        /* Action Controls */
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .play-main-btn {
+            width: 56px;
+            height: 56px;
+            background: var(--spotify-green);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: var(--spotify-black);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .play-main-btn:hover {
+            transform: scale(1.05);
+            background: var(--spotify-green-hover);
+        }
+
+        /* ==========================================
+           3. TRACKLIST TABLE
+           ========================================== */
+        .tracklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .tracklist-table th {
+            color: var(--spotify-gray-text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid var(--spotify-border);
+            padding: 0 16px 12px 16px;
+        }
+
+        .track-row {
+            transition: var(--transition-fast);
+            border-radius: 4px;
+        }
+
+        .track-row:hover {
+            background-color: var(--spotify-card-hover);
+        }
+
+        .track-row td {
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            color: var(--spotify-gray-text);
+            vertical-align: middle;
+        }
+
+        .track-row td:first-child {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            width: 40px;
+        }
+
+        .track-row td:last-child {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .track-name {
+            color: var(--spotify-white);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .track-row:hover .track-name {
+            color: var(--spotify-green);
+        }
+
+        .artist-cell {
+            color: var(--spotify-white);
+            font-weight: 500;
+        }
+
+        .inline-audio {
+            width: 100%;
+            max-width: 280px;
+            height: 32px;
+            filter: invert(0.92) hue-rotate(180deg);
+            outline: none;
+            border-radius: 20px;
+        }
+
+        #no-results {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--spotify-gray-text);
+            font-size: 1rem;
+        }
+
+        /* Equalizer Wave Animation */
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+            width: 14px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            background: var(--spotify-green);
+            animation: eqBounce 1s infinite alternate ease-in-out;
+        }
+
+        .eq-bar:nth-child(1) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(2) { animation-delay: 0.4s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.1s; }
+
+        @keyframes eqBounce {
+            0% { height: 3px; }
+            100% { height: 14px; }
+        }
+
+        /* ==========================================
+           4. BOTTOM SPOTIFY PLAYER BAR
+           ========================================== */
+        .bottom-player {
+            background-color: var(--spotify-black);
+            border-top: 1px solid var(--spotify-border);
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 10;
+        }
+
+        .currently-playing {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .now-art {
+            width: 56px;
+            height: 56px;
+            background: var(--spotify-light-gray);
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+        }
+
+        .now-art svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--spotify-green);
+        }
+
+        .now-info h5 {
+            font-size: 0.85rem;
+            color: var(--spotify-white);
+            font-weight: 600;
+        }
+
+        .now-info p {
+            font-size: 0.75rem;
+            color: var(--spotify-gray-text);
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .master-audio {
+            width: 100%;
+            max-width: 500px;
+            height: 36px;
+            filter: invert(0.9) hue-rotate(180deg);
+        }
+
+        .volume-controls {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            color: var(--spotify-gray-text);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .banner-title {
+                font-size: 2.2rem;
+            }
+            .album-art {
+                width: 120px;
+                height: 120px;
+            }
+            .bottom-player {
+                grid-template-columns: 1fr 1fr;
+            }
+            .volume-controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-logo">
+                <!-- Official Spotify SVG Logo Icon -->
+                <svg class="spotify-icon-svg" viewBox="0 0 24 24">
+                    <path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141 C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.18-.1.2-.2-.421.18-.6.78-.961 1.38-.78 4.26 1.26 11.28 1.5 15.72 2.761.6.18.9.78.72 1.38-.18.6-.78.84-1.38.66z"/>
+                </svg>
+                <span>Friend's Voice</span>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <span class="nav-icon">🏠</span> Home
+                </li>
+                <li class="nav-item" onclick="focusSearch()">
+                    <span class="nav-icon">🔍</span> Search
+                </li>
+                <li class="nav-item">
+                    <span class="nav-icon">📚</span> Your Library
+                </li>
+            </ul>
+
+            <div class="library-box">
+                <h4>Friend's Voice Audio Vault</h4>
+                <p>Enjoy exclusive tracks and recordings uploaded directly by artists.</p>
+            </div>
+        </aside>
+
+        <!-- Main View Header & Tracks -->
+        <main class="main-view">
+            
+            <!-- Top Search Input -->
+            <div class="top-bar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" onkeyup="filterSongs()" placeholder="Search by song name or singer name...">
+                </div>
+            </div>
+
+            <!-- Main Title Header -->
+            <div class="playlist-banner">
+                <div class="album-art">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </div>
+                <div class="banner-info">
+                    <span class="badge">Verified Public Playlist</span>
+                    <h1 class="banner-title">Friend's Voice</h1>
+                    <div class="banner-meta">
+                        <strong>Official Music Collection</strong> • 4 Tracks
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="play-main-btn" title="Play All">▶</div>
+            </div>
+
+            <!-- Song List Table -->
+            <table class="tracklist-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Singer</th>
+                        <th>Audio Player</th>
+                    </tr>
+                </thead>
+                <tbody id="songList">
+
+                    <!-- Track 01 -->
+                    <tr class="track-row">
+                        <td>
+                            <div class="equalizer">
+                                <div class="eq-bar"></div>
+                                <div class="eq-bar"></div>
+                                <div class="eq-bar"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="track-info">
+                                <span class="track-name" style="color: var(--spotify-green);"></span>
+                                 <span class="track-name">Maje Maje tobo</span>
+                                 <span class="artist-name">Rabindro_Songith</span>
+                            </div>
+                        </td>
+                        <td class="artist-cell">Yesmin Sultana Eli</td>
+                        <td>
+                            <audio class="inline-audio" controls preload="metadata">
+                                <source src="maje_maje_tobo.mp4" type="audio/mp4">
+                            </audio>
+                        </td>
+                    </tr>
+
+                    <!-- Track 02 -->
+                    <tr class="track-row">
+                        <td>2</td>
+                        <td>
+                            <div class="track-info">
+                                <span class="track-name">Humnaba mere</span>
+                                <span class="artist-name">Jubin</span>
+                            </div>
+                        </td>
+                        <td class="artist-cell">Yesmin Sultana Eli</td>
+                        <td>
+                            <audio class="inline-audio" controls preload="metadata">
+                                <source src="humnaba_mere.mp4" type="audio/mp4">
+                            </audio>
+                        </td>
+                    </tr>
+
+                    <!-- Track 03 -->
+                    <tr class="track-row">
+                        <td>3</td>
+                        <td>
+                            <div class="track-info">
+                                <span class="track-name">Main agar kahu</span>
+                                <span class="artist-name">Shreya Goshal</span>
+                            </div>
+                        </td>
+                        <td class="artist-cell">Yesmin Sultana Eli</td>
+                        <td>
+                            <audio class="inline-audio" controls preload="metadata">
+                                <source src="main_agar_kahu.mp4" type="audio/mp4">
+                            </audio>
+                        </td>
+                    </tr>
+
+                    <!-- Track 04 -->
+                    <tr class="track-row">
+                        <td>4</td>
+                        <td>
+                            <div class="track-info">
+                                <span class="track-name">Modhu maloti</span>
+                                <span class="artist-name"> Shandhya mukharjee </span>
+                            </div>
+                        </td>
+                        <td class="artist-cell">Yesmin Sultana Eli</td>
+                        <td>
+                            <audio class="inline-audio" controls preload="metadata">
+                                <source src="modhu_maloti.mp4" type="audio/mp4">
+                            </audio>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div id="no-results">No songs or artists found matching your search term.</div>
+
+        </main>
+    </div>
+
+    <!-- Bottom Audio Control Bar -->
+    <footer class="bottom-player">
+        <div class="currently-playing">
+            <div class="now-art">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+            </div>
+            <div class="now-info">
+                <h5>Song One</h5>
+                <p>Friend's Name</p>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <audio class="master-audio" controls>
+                <source src="songs/song1.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="volume-controls">
+            <span>🔊 Friend's Voice Web Engine</span>
+        </div>
+    </footer>
+
+    <!-- Instant Search Logic -->
+    <script>
+        function filterSongs() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll('#songList .track-row');
+            const noResults = document.getElementById('no-results');
+            let matchFound = false;
+
+            rows.forEach(row => {
+                const songTitle = row.querySelector('.track-name').textContent.toLowerCase();
+                const artistName = row.querySelector('.artist-cell').textContent.toLowerCase();
+
+                if (songTitle.includes(filter) || artistName.includes(filter)) {
+                    row.style.display = "";
+                    matchFound = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            noResults.style.display = matchFound ? "none" : "block";
+        }
+
+        function focusSearch() {
+            document.getElementById('searchInput').focus();
+        }
+    </script>
+
+</body>
+</html>
