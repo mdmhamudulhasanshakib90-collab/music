@@ -970,179 +970,188 @@
     </footer>
 
     <!-- Mobile Bottom Navigation Bar -->
-    <div class="mobile-nav-bar">
+    <nav class="mobile-nav-bar">
         <div class="mobile-nav-item active" onclick="switchMobileTab(this)">
-            <span>🏠</span>
-            Home
+            <span>🏠</span> Home
         </div>
         <div class="mobile-nav-item" onclick="focusSearch(); switchMobileTab(this)">
-            <span>🔍</span>
-            Search
+            <span>🔍</span> Search
+        </div>
+        <div class="mobile-nav-item" onclick="switchMobileTab(this)">
+            <span>🎵</span> Playlists
         </div>
         <div class="mobile-nav-item" onclick="openModal('aboutModal')">
-            <span>ℹ️</span>
-            About
+            <span>ℹ️</span> About
         </div>
-    </div>
+    </nav>
 
-    <!-- About Us Modal -->
+    <!-- Modals for Policies & About -->
     <div class="modal" id="aboutModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('aboutModal')">✕</button>
-            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">About Friend's Voice</h3>
-            <p style="font-size: 0.9rem; color: var(--theme-gray-text); line-height: 1.6;">
-                Welcome to Friend's Voice, an aesthetic, light-weight audio platform designed to stream cover songs and personal recordings directly to your browser with crystal clear quality.
+            <button class="modal-close" onclick="closeModal('aboutModal')">&times;</button>
+            <h3 style="margin-bottom: 12px; color: var(--theme-text-primary);">About Friend's Voice</h3>
+            <p style="font-size: 0.88rem; color: var(--theme-gray-text); line-height: 1.6;">
+                Friend's Voice is a curated personal music platform dedicated to presenting high-quality audio renditions, covers, and classic music tracks performed by independent vocalists and friends.
             </p>
         </div>
     </div>
 
-    <!-- Privacy Policy Modal -->
     <div class="modal" id="policyModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('policyModal')">✕</button>
-            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">Privacy Policy</h3>
+            <button class="modal-close" onclick="closeModal('policyModal')">&times;</button>
+            <h3 style="margin-bottom: 12px; color: var(--theme-text-primary);">Privacy Policy</h3>
             <p style="font-size: 0.88rem; color: var(--theme-gray-text); line-height: 1.6;">
-                Your privacy is important to us. Friend's Voice does not collect or store any personal data or tracking cookies from visitors. All audio streaming is handled directly within your device's browser session.
+                Friend's Voice values your privacy. We do not track personal identification details, collect cookies for advertising, or share user data with third parties. Audio streaming is provided directly through browser native protocols.
             </p>
         </div>
     </div>
 
-    <!-- Terms of Service Modal -->
     <div class="modal" id="termsModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('termsModal')">✕</button>
-            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">Terms of Service</h3>
+            <button class="modal-close" onclick="closeModal('termsModal')">&times;</button>
+            <h3 style="margin-bottom: 12px; color: var(--theme-text-primary);">Terms of Service</h3>
             <p style="font-size: 0.88rem; color: var(--theme-gray-text); line-height: 1.6;">
-                The audio tracks hosted on Friend's Voice are protected under respective copyright laws. Unauthorized downloading, commercial distribution, or remixing without permission is strictly prohibited.
+                All media hosted on Friend's Voice is intended for non-commercial personal listening. Reproduction, redistribution, or commercial reuse of any audio content without express consent is strictly prohibited.
             </p>
         </div>
     </div>
 
-    <!-- Logic & Event Listeners -->
+    <!-- ==========================================
+       6. JAVASCRIPT LOGIC
+       ========================================== -->
     <script>
-        const allAudios = document.querySelectorAll('audio');
-        const nowTitle = document.getElementById('nowPlayingTitle');
-        const nowArtist = document.getElementById('nowPlayingArtist');
-        const seekBar = document.getElementById('seekBar');
-        const currentTimeTxt = document.getElementById('currentTime');
-        const durationTimeTxt = document.getElementById('durationTime');
-        const themeLabels = document.querySelectorAll('.themeLabel');
-        
-        let activeAudio = null;
+        let currentAudio = null;
 
-        // Theme Toggle Handler (Light/Dark Mode Switcher)
+        // Theme Switcher Logic
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const htmlTag = document.documentElement;
+            const currentTheme = htmlTag.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            themeLabels.forEach(label => {
-                label.textContent = newTheme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode';
+            htmlTag.setAttribute('data-theme', newTheme);
+
+            const labels = document.querySelectorAll('.themeLabel');
+            labels.forEach(lbl => {
+                lbl.textContent = newTheme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode';
             });
         }
 
-        // Auto-pause and Bottom Bar Sync Logic
-        allAudios.forEach((audio) => {
-            audio.addEventListener('play', function() {
-                // Pause all other audio players
-                allAudios.forEach(a => {
-                    if (a !== audio) {
-                        a.pause();
-                    }
-                });
+        // Live Search Filter Functionality
+        function filterSongs() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#songList .track-row');
+            let visibleCount = 0;
 
-                activeAudio = audio;
-                
-                // Get track details from table row
-                const row = audio.closest('tr');
-                if (row) {
-                    const title = row.querySelector('.track-name').textContent;
-                    const artist = row.querySelector('.artist-cell').textContent;
-                    nowTitle.textContent = title;
-                    nowArtist.textContent = artist;
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(input)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
                 }
             });
 
-            // Update Progress Bar / Seekbar
-            audio.addEventListener('timeupdate', function() {
-                if (audio === activeAudio) {
-                    const progress = (audio.currentTime / audio.duration) * 100;
-                    seekBar.value = progress || 0;
-                    currentTimeTxt.textContent = formatTime(audio.currentTime);
-                    if(!isNaN(audio.duration)) {
-                        durationTimeTxt.textContent = formatTime(audio.duration);
-                    }
-                }
-            });
-        });
+            const noResults = document.getElementById('no-results');
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
 
-        // Seek Audio using bottom seek bar
-        seekBar.addEventListener('input', function() {
-            if (activeAudio && !isNaN(activeAudio.duration)) {
-                const seekTo = (seekBar.value / 100) * activeAudio.duration;
-                activeAudio.currentTime = seekTo;
-            }
-        });
+        function focusSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.focus();
+        }
 
-        // Time Formatting Helper
+        // Audio Synchronization and Playback Controls
+        const audioElements = document.querySelectorAll('.inline-audio');
+        const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+        const nowPlayingArtist = document.getElementById('nowPlayingArtist');
+        const currentTimeText = document.getElementById('currentTime');
+        const durationTimeText = document.getElementById('durationTime');
+        const seekBar = document.getElementById('seekBar');
+
         function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // Play First Song from Big Play Button
+        audioElements.forEach(audio => {
+            audio.addEventListener('play', function() {
+                // Pause all other playing audio tracks
+                audioElements.forEach(otherAudio => {
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                    }
+                });
+
+                currentAudio = audio;
+
+                // Extract track metadata from table row
+                const row = audio.closest('.track-row');
+                const title = row.querySelector('.track-name').textContent;
+                const singer = row.querySelector('.artist-cell').textContent;
+
+                nowPlayingTitle.textContent = title;
+                nowPlayingArtist.textContent = singer;
+            });
+
+            audio.addEventListener('timeupdate', function() {
+                if (currentAudio === audio) {
+                    const current = audio.currentTime;
+                    const duration = audio.duration || 0;
+                    
+                    currentTimeText.textContent = formatTime(current);
+                    durationTimeText.textContent = formatTime(duration);
+                    
+                    if (duration > 0) {
+                        seekBar.value = (current / duration) * 100;
+                    }
+                }
+            });
+        });
+
+        // Seek Bar Manipulation
+        seekBar.addEventListener('input', function() {
+            if (currentAudio && currentAudio.duration) {
+                const targetTime = (seekBar.value / 100) * currentAudio.duration;
+                currentAudio.currentTime = targetTime;
+            }
+        });
+
+        // Play First Track Shortcut Button
         function playFirstTrack() {
-            if (allAudios.length > 0) {
-                allAudios[0].play();
+            if (audioElements.length > 0) {
+                audioElements[0].play();
             }
         }
 
-        // Instant Search Logic
-        function filterSongs() {
-            const filter = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#songList .track-row');
-            const noResults = document.getElementById('no-results');
-            let matchFound = false;
-
-            rows.forEach(row => {
-                const songTitle = row.querySelector('.track-name').textContent.toLowerCase();
-                const artistName = row.querySelector('.artist-cell').textContent.toLowerCase();
-
-                if (songTitle.includes(filter) || artistName.includes(filter)) {
-                    row.style.display = "";
-                    matchFound = true;
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            noResults.style.display = matchFound ? "none" : "block";
-        }
-
-        function focusSearch() {
-            document.getElementById('searchInput').focus();
-        }
-
+        // Navigation Active States
         function switchTab(element) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
         function switchMobileTab(element) {
-            document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
         // Modal Handlers
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'flex';
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
         }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
     </script>
-
 </body>
 </html>
