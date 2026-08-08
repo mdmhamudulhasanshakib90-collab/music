@@ -69,7 +69,7 @@
             color: var(--theme-text-primary);
             height: 100vh;
             display: grid;
-            grid-template-rows: 1fr 90px;
+            grid-template-rows: 1fr 100px;
             overflow: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -82,7 +82,7 @@
             grid-template-columns: 280px 1fr;
             gap: 10px;
             padding: 10px 10px 0 10px;
-            height: calc(100vh - 90px);
+            height: calc(100vh - 100px);
             overflow: hidden;
         }
 
@@ -95,6 +95,7 @@
             flex-direction: column;
             gap: 24px;
             border: 1px solid var(--theme-border);
+            overflow-y: auto;
             transition: background-color 0.3s ease;
         }
 
@@ -194,6 +195,7 @@
             background: var(--theme-banner-bg);
             border-radius: 12px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 24px 32px;
             border: 1px solid var(--theme-border);
             transition: background 0.3s ease;
@@ -465,28 +467,35 @@
         }
 
         /* ==========================================
-           4. BOTTOM PLAYER BAR & MOBILE NAV
+           4. BOTTOM PLAYER BAR & POLICY FOOTER
            ========================================== */
         .bottom-player {
             background-color: var(--theme-base);
             border-top: 1px solid var(--theme-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px 24px;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+        }
+
+        .player-main-grid {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            padding: 0 24px;
-            z-index: 10;
-            transition: background-color 0.3s ease;
+            width: 100%;
         }
 
         .currently-playing {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .now-art {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: var(--theme-card);
             border-radius: 6px;
             display: grid;
@@ -496,50 +505,50 @@
         }
 
         .now-art svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             fill: var(--theme-accent);
         }
 
         .now-info h5 {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--theme-text-primary);
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
+            max-width: 140px;
         }
 
         .now-info p {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--theme-gray-text);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
+            max-width: 140px;
         }
 
         .player-controls {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             width: 100%;
         }
 
         .player-progress-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .time-text {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--theme-gray-text);
-            width: 35px;
+            width: 32px;
         }
 
         .seek-bar {
@@ -550,13 +559,12 @@
             background: var(--theme-light-gray);
             outline: none;
             cursor: pointer;
-            transition: all 0.25s ease;
         }
 
         .seek-bar::-webkit-slider-thumb {
             appearance: none;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--theme-accent);
             cursor: pointer;
@@ -568,14 +576,30 @@
             opacity: 1;
         }
 
-        .volume-controls {
+        .footer-policy-row {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            border-top: 1px solid var(--theme-border);
+            padding-top: 4px;
+            font-size: 0.7rem;
             color: var(--theme-gray-text);
-            font-size: 0.8rem;
-            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--theme-gray-text);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--theme-accent);
+            text-decoration: underline;
         }
 
         /* Mobile Bottom Nav Bar */
@@ -612,7 +636,7 @@
             font-size: 1.1rem;
         }
 
-        /* Modal Box Styling for About Us */
+        /* Modal Box Styling for Policy / About */
         .modal {
             display: none;
             position: fixed;
@@ -632,6 +656,8 @@
             border-radius: 12px;
             max-width: 480px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
             box-shadow: 0 16px 40px rgba(0,0,0,0.2);
             position: relative;
         }
@@ -660,7 +686,7 @@
             .app-container {
                 grid-template-columns: 1fr;
                 padding: 6px;
-                height: calc(100vh - 130px);
+                height: calc(100vh - 120px);
             }
 
             .sidebar {
@@ -708,13 +734,18 @@
             }
 
             .bottom-player {
-                grid-template-columns: 1fr;
-                gap: 8px;
-                padding: 10px 16px;
+                padding: 8px 12px;
             }
 
-            .volume-controls {
-                display: none;
+            .player-main-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .footer-policy-row {
+                flex-direction: column;
+                gap: 2px;
+                text-align: center;
             }
 
             .mobile-nav-bar {
@@ -722,7 +753,7 @@
             }
 
             .now-info h5, .now-info p {
-                max-width: 200px;
+                max-width: 220px;
             }
         }
     </style>
@@ -759,7 +790,7 @@
                 <li class="nav-item" onclick="switchTab(this)">
                     <span class="nav-icon">❤️</span> Liked Songs
                 </li>
-                <li class="nav-item" onclick="openModal()">
+                <li class="nav-item" onclick="openModal('aboutModal')">
                     <span class="nav-icon">ℹ️</span> About Us
                 </li>
             </ul>
@@ -835,7 +866,7 @@
                             <td class="artist-cell">Yesmin Sultana Eli</td>
                             <td>
                                 <audio class="inline-audio" controls preload="metadata">
-                                    <source src=" assets/maje_maje_tobo.mp4" type="audio/mp4">
+                                    <source src="assets/maje_maje_tobo.mp4" type="audio/mp4">
                                 </audio>
                             </td>
                         </tr>
@@ -900,30 +931,41 @@
         </main>
     </div>
 
-    <!-- Bottom Audio Control Bar -->
+    <!-- Bottom Audio Control Bar & Policy Footer -->
     <footer class="bottom-player">
-        <div class="currently-playing">
-            <div class="now-art">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
+        <div class="player-main-grid">
+            <div class="currently-playing">
+                <div class="now-art">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </div>
+                <div class="now-info">
+                    <h5 id="nowPlayingTitle">Select a Track</h5>
+                    <p id="nowPlayingArtist">Friend's Voice</p>
+                </div>
             </div>
-            <div class="now-info">
-                <h5 id="nowPlayingTitle">Select a Track</h5>
-                <p id="nowPlayingArtist">Friend's Voice</p>
+
+            <div class="player-controls">
+                <div class="player-progress-container">
+                    <span class="time-text" id="currentTime">0:00</span>
+                    <input type="range" class="seek-bar" id="seekBar" value="0" min="0" max="100">
+                    <span class="time-text" id="durationTime">0:00</span>
+                </div>
+            </div>
+
+            <div style="text-align: right; font-size: 0.75rem; color: var(--theme-gray-text);">
+                🎧 Friend's Voice Audio
             </div>
         </div>
 
-        <div class="player-controls">
-            <div class="player-progress-container">
-                <span class="time-text" id="currentTime">0:00</span>
-                <input type="range" class="seek-bar" id="seekBar" value="0" min="0" max="100">
-                <span class="time-text" id="durationTime">0:00</span>
+        <!-- Footer Policy Section -->
+        <div class="footer-policy-row">
+            <span>&copy; 2026 Friend's Voice. All rights reserved.</span>
+            <div class="footer-links">
+                <a href="javascript:void(0)" onclick="openModal('policyModal')">Privacy Policy</a>
+                <a href="javascript:void(0)" onclick="openModal('termsModal')">Terms of Service</a>
             </div>
-        </div>
-
-        <div class="volume-controls">
-            <span>🎧 Friend's Voice Web Engine</span>
         </div>
     </footer>
 
@@ -937,7 +979,7 @@
             <span>🔍</span>
             Search
         </div>
-        <div class="mobile-nav-item" onclick="openModal()">
+        <div class="mobile-nav-item" onclick="openModal('aboutModal')">
             <span>ℹ️</span>
             About
         </div>
@@ -946,10 +988,32 @@
     <!-- About Us Modal -->
     <div class="modal" id="aboutModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">✕</button>
+            <button class="modal-close" onclick="closeModal('aboutModal')">✕</button>
             <h3 style="margin-bottom: 12px; color: var(--theme-accent);">About Friend's Voice</h3>
             <p style="font-size: 0.9rem; color: var(--theme-gray-text); line-height: 1.6;">
                 Welcome to Friend's Voice, an aesthetic, light-weight audio platform designed to stream cover songs and personal recordings directly to your browser with crystal clear quality.
+            </p>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="policyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('policyModal')">✕</button>
+            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">Privacy Policy</h3>
+            <p style="font-size: 0.88rem; color: var(--theme-gray-text); line-height: 1.6;">
+                Your privacy is important to us. Friend's Voice does not collect or store any personal data or tracking cookies from visitors. All audio streaming is handled directly within your device's browser session.
+            </p>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('termsModal')">✕</button>
+            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">Terms of Service</h3>
+            <p style="font-size: 0.88rem; color: var(--theme-gray-text); line-height: 1.6;">
+                The audio tracks hosted on Friend's Voice are protected under respective copyright laws. Unauthorized downloading, commercial distribution, or remixing without permission is strictly prohibited.
             </p>
         </div>
     </div>
@@ -1071,12 +1135,12 @@
         }
 
         // Modal Handlers
-        function openModal() {
-            document.getElementById('aboutModal').style.display = 'flex';
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('aboutModal').style.display = 'none';
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
     </script>
 
