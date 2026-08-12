@@ -5,1041 +5,645 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friend's Voice</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* ==========================================
-           1. BRAND COLOR SCHEME & THEME VARIABLES
-           ========================================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Light Theme Variables (Default) */
-        [data-theme="light"] {
-            --theme-black: #f4f4f5;
-            --theme-base: #ffffff;
-            --theme-card: #f1f5f9;
-            --theme-card-hover: #e2e8f0;
-            --theme-accent: #16a34a;
-            --theme-accent-hover: #15803d;
-            --theme-text-primary: #0f172a;
-            --theme-gray-text: #64748b;
-            --theme-light-gray: #e2e8f0;
-            --theme-border: rgba(0, 0, 0, 0.08);
-            --theme-banner-bg: linear-gradient(180deg, #dcfce7 0%, #ffffff 280px);
-            --audio-filter: invert(0);
-        }
-
-        /* Dark Theme Variables */
-        [data-theme="dark"] {
-            --theme-black: #09090b;
-            --theme-base: #121215;
-            --theme-card: #18181c;
-            --theme-card-hover: #26262b;
-            --theme-accent: #1ed760;
-            --theme-accent-hover: #22ef6c;
-            --theme-text-primary: #ffffff;
-            --theme-gray-text: #a1a1aa;
-            --theme-light-gray: #202024;
-            --theme-border: rgba(255, 255, 255, 0.08);
-            --theme-banner-bg: linear-gradient(180deg, #122b1c 0%, #121215 280px);
-            --audio-filter: invert(0.92) hue-rotate(180deg);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--theme-black);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-        }
-        [data-theme="dark"] ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        body {
-            background-color: var(--theme-black);
-            color: var(--theme-text-primary);
-            height: 100vh;
-            display: grid;
-            grid-template-rows: 1fr 90px;
-            overflow: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* ==========================================
-           2. APPLICATION LAYOUT
-           ========================================== */
-        .app-container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 10px;
-            padding: 10px 10px 0 10px;
-            height: calc(100vh - 90px);
-            overflow: hidden;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            background-color: var(--theme-base);
-            border-radius: 12px;
-            padding: 24px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            border: 1px solid var(--theme-border);
-            transition: background-color 0.3s ease;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--theme-text-primary);
-            letter-spacing: -0.5px;
-        }
-
-        .brand-icon-svg {
-            width: 32px;
-            height: 32px;
-            fill: var(--theme-accent);
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            color: var(--theme-gray-text);
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .nav-item:hover {
-            color: var(--theme-text-primary);
-            background-color: var(--theme-card-hover);
-        }
-
-        .nav-item.active {
-            color: var(--theme-accent);
-            background-color: rgba(30, 215, 96, 0.12);
-        }
-
-        .nav-icon {
-            font-size: 1.1rem;
-        }
-
-        /* Theme Toggle Switcher Button */
-        .theme-toggle-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--theme-card);
-            border: 1px solid var(--theme-border);
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.88rem;
-            color: var(--theme-text-primary);
-            transition: all 0.25s ease;
-        }
-
-        .theme-toggle-btn:hover {
-            background-color: var(--theme-card-hover);
-        }
-
-        .library-box {
-            background: var(--theme-card);
-            border-radius: 10px;
-            padding: 16px;
-            margin-top: auto;
-            border: 1px solid var(--theme-border);
-        }
-
-        .library-box h4 {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--theme-text-primary);
-        }
-
-        .library-box p {
-            font-size: 0.78rem;
-            color: var(--theme-gray-text);
-            line-height: 1.4;
-        }
-
-        /* Main View Header & Content */
-        .main-view {
-            background: var(--theme-banner-bg);
-            border-radius: 12px;
-            overflow-y: auto;
-            padding: 24px 32px;
-            border: 1px solid var(--theme-border);
-            transition: background 0.3s ease;
-        }
-
-        /* Top Bar with Search */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 380px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 16px 10px 42px;
-            border-radius: 50px;
-            background: var(--theme-base);
-            border: 1px solid var(--theme-border);
-            color: var(--theme-text-primary);
-            font-size: 0.88rem;
-            outline: none;
-            transition: all 0.25s ease;
-        }
-
-        .search-box input:focus {
-            border-color: var(--theme-accent);
-            box-shadow: 0 0 12px rgba(30, 215, 96, 0.2);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--theme-gray-text);
-            font-size: 0.9rem;
-        }
-
-        /* Playlist Banner */
-        .playlist-banner {
-            display: flex;
-            align-items: flex-end;
-            gap: 24px;
-            margin-bottom: 28px;
-        }
-
-        .album-art {
-            width: 160px;
-            height: 160px;
-            background: linear-gradient(135deg, #059669, var(--theme-accent));
-            border-radius: 12px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .album-art svg {
-            width: 70px;
-            height: 70px;
-            fill: #ffffff;
-        }
-
-        .banner-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--theme-accent);
-            letter-spacing: 1px;
-        }
-
-        .banner-title {
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            color: var(--theme-text-primary);
-        }
-
-        .banner-meta {
-            font-size: 0.85rem;
-            color: var(--theme-gray-text);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .banner-meta strong {
-            color: var(--theme-text-primary);
-        }
-
-        /* Action Controls */
-        .action-bar {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .play-main-btn {
-            width: 52px;
-            height: 52px;
-            background: var(--theme-accent);
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            color: #ffffff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 8px 20px rgba(30, 215, 96, 0.3);
-        }
-
-        .play-main-btn:hover {
-            transform: scale(1.06);
-            background: var(--theme-accent-hover);
-        }
-
-        /* ==========================================
-           3. TRACKLIST TABLE
-           ========================================== */
-        .tracklist-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .tracklist-table th {
-            color: var(--theme-gray-text);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--theme-border);
-            padding: 0 16px 12px 16px;
-        }
-
-        .track-row {
-            transition: background-color 0.2s ease;
-            border-radius: 6px;
-        }
-
-        .track-row:hover {
-            background-color: var(--theme-card-hover);
-        }
-
-        .track-row td {
-            padding: 12px 16px;
-            font-size: 0.88rem;
-            color: var(--theme-gray-text);
-            vertical-align: middle;
-        }
-
-        .track-row td:first-child {
-            border-top-left-radius: 6px;
-            border-bottom-left-radius: 6px;
-            width: 40px;
-            text-align: center;
-        }
-
-        .track-row td:last-child {
-            border-top-right-radius: 6px;
-            border-bottom-right-radius: 6px;
-        }
-
-        .track-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .track-name {
-            color: var(--theme-text-primary);
-            font-weight: 600;
-            font-size: 0.92rem;
-            display: block;
-        }
-
-        .artist-name {
-            font-size: 0.78rem;
-            color: var(--theme-gray-text);
-        }
-
-        .track-row:hover .track-name {
-            color: var(--theme-accent);
-        }
-
-        .artist-cell {
-            color: var(--theme-text-primary);
-            font-weight: 500;
-        }
-
-        .inline-audio {
-            width: 100%;
-            max-width: 260px;
-            height: 32px;
-            filter: var(--audio-filter);
-            outline: none;
-            border-radius: 20px;
-        }
-
-        #no-results {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            color: var(--theme-gray-text);
-            font-size: 0.95rem;
-        }
-
-        /* Equalizer Animation */
-        .equalizer {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 2px;
-            height: 14px;
-            width: 14px;
-            margin: 0 auto;
-        }
-
-        .eq-bar {
-            width: 3px;
-            background: var(--theme-accent);
-            animation: eqBounce 0.8s infinite alternate ease-in-out;
-        }
-
-        .eq-bar:nth-child(1) { animation-delay: 0.2s; }
-        .eq-bar:nth-child(2) { animation-delay: 0.4s; }
-        .eq-bar:nth-child(3) { animation-delay: 0.1s; }
-
-        @keyframes eqBounce {
-            0% { height: 3px; }
-            100% { height: 14px; }
-        }
-
-        /* ==========================================
-           4. BOTTOM PLAYER BAR
-           ========================================== */
-        .bottom-player {
-            background-color: var(--theme-base);
-            border-top: 1px solid var(--theme-border);
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            align-items: center;
-            padding: 0 24px;
-            z-index: 10;
-            transition: background-color 0.3s ease;
-        }
-
-        .currently-playing {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .now-art {
-            width: 48px;
-            height: 48px;
-            background: var(--theme-card);
-            border-radius: 6px;
-            display: grid;
-            place-items: center;
-            border: 1px solid var(--theme-border);
-        }
-
-        .now-art svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--theme-accent);
-        }
-
-        .now-info h5 {
-            font-size: 0.85rem;
-            color: var(--theme-text-primary);
-            font-weight: 600;
-        }
-
-        .now-info p {
-            font-size: 0.75rem;
-            color: var(--theme-gray-text);
-        }
-
-        .player-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .player-progress-container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .time-text {
-            font-size: 0.72rem;
-            color: var(--theme-gray-text);
-            width: 35px;
-        }
-
-        .seek-bar {
-            flex-grow: 1;
-            height: 4px;
-            border-radius: 2px;
-            appearance: none;
-            background: var(--theme-light-gray);
-            outline: none;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .seek-bar::-webkit-slider-thumb {
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--theme-accent);
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .player-progress-container:hover .seek-bar::-webkit-slider-thumb {
-            opacity: 1;
-        }
-
-        .volume-controls {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-            color: var(--theme-gray-text);
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Modal Box Styling for About Us */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--theme-base);
-            border: 1px solid var(--theme-border);
-            padding: 32px;
-            border-radius: 12px;
-            max-width: 480px;
-            width: 90%;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            font-size: 1.2rem;
-            color: var(--theme-gray-text);
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
-
-        .modal-close:hover { color: var(--theme-text-primary); }
-
-        @media (max-width: 768px) {
-            .app-container { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .banner-title { font-size: 2rem; }
-            .album-art { width: 110px; height: 110px; }
-            .bottom-player { grid-template-columns: 1fr 1fr; }
-            .volume-controls { display: none; }
-        }
-        /* Control Buttons Styling */
+   /* ==========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Light Theme Variables (Default) */
+[data-theme="light"], body {
+    --theme-black: #f4f4f5;
+    --theme-base: #ffffff;
+    --theme-card: #f8fafc;
+    --theme-card-hover: #f1f5f9;
+    --theme-accent: #16a34a;
+    --theme-accent-hover: #15803d;
+    --theme-text-primary: #0f172a;
+    --theme-gray-text: #64748b;
+    --theme-light-gray: #e2e8f0;
+    --theme-border: rgba(0, 0, 0, 0.08);
+    --theme-banner-bg: linear-gradient(180deg, #dcfce7 0%, #ffffff 280px);
+    --audio-filter: invert(0);
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --theme-black: #09090b;
+    --theme-base: #121215;
+    --theme-card: #18181c;
+    --theme-card-hover: #26262b;
+    --theme-accent: #1ed760;
+    --theme-accent-hover: #22ef6c;
+    --theme-text-primary: #ffffff;
+    --theme-gray-text: #a1a1aa;
+    --theme-light-gray: #202024;
+    --theme-border: rgba(255, 255, 255, 0.08);
+    --theme-banner-bg: linear-gradient(180deg, #122b1c 0%, #121215 280px);
+    --audio-filter: invert(0.92) hue-rotate(180deg);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--theme-black);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+body {
+    background-color: var(--theme-black);
+    color: var(--theme-text-primary);
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr 90px;
+    overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================
+   2. MAIN LAYOUT & SIDEBAR NAVIGATION
+   ========================================== */
+.app-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 10px;
+    padding: 10px 10px 0 10px;
+    height: calc(100vh - 90px);
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: var(--theme-base);
+    border-radius: 12px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid var(--theme-border);
+    transition: background-color 0.3s ease;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--theme-text-primary);
+    letter-spacing: -0.5px;
+}
+
+.brand-icon-svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--theme-accent);
+}
+
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--theme-card);
+    border: 1px solid var(--theme-border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--theme-text-primary);
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--theme-card-hover);
+    border-color: var(--theme-accent);
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--theme-gray-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    color: var(--theme-text-primary);
+    background-color: var(--theme-card-hover);
+}
+
+.nav-item.active {
+    color: var(--theme-accent);
+    background-color: rgba(30, 215, 96, 0.12);
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+}
+
+.library-box {
+    background: var(--theme-card);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: auto;
+    border: 1px solid var(--theme-border);
+}
+
+.library-box h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--theme-text-primary);
+}
+
+.library-box p {
+    font-size: 0.78rem;
+    color: var(--theme-gray-text);
+    line-height: 1.4;
+}
+
+/* ==========================================
+   3. MAIN VIEW & HEADER SECTION
+   ========================================== */
+.main-view {
+    background: var(--theme-banner-bg);
+    border-radius: 12px;
+    overflow-y: auto;
+    padding: 24px 32px;
+    border: 1px solid var(--theme-border);
+    transition: background 0.3s ease;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.search-box {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 16px 10px 42px;
+    border-radius: 50px;
+    background: var(--theme-base);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text-primary);
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 12px rgba(30, 215, 96, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--theme-gray-text);
+    font-size: 0.9rem;
+}
+
+.playlist-banner {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.album-art {
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(135deg, #059669, var(--theme-accent));
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.album-art svg {
+    width: 60px;
+    height: 60px;
+    fill: #ffffff;
+}
+
+.banner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--theme-accent);
+    letter-spacing: 1px;
+}
+
+.banner-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    color: var(--theme-text-primary);
+}
+
+.banner-meta {
+    font-size: 0.85rem;
+    color: var(--theme-gray-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.banner-meta strong {
+    color: var(--theme-text-primary);
+}
+
+.action-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.play-main-btn {
+    width: 52px;
+    height: 52px;
+    background: var(--theme-accent);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 8px 20px rgba(30, 215, 96, 0.3);
+    user-select: none;
+}
+
+.play-main-btn:hover {
+    transform: scale(1.06);
+    background: var(--theme-accent-hover);
+}
+
+/* ==========================================
+   4. TRACKLIST & TRACK CARDS
+   ========================================== */
+.tracklist-table {
+    display: block;
+    width: 100%;
+}
+
+.tracklist-table thead {
+    display: none; /* Card layout structured inside #songList */
+}
+
+#songList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 720px;
+}
+
+.track-row {
+    background-color: var(--theme-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.track-row:hover {
+    background-color: var(--theme-card-hover);
+    border-color: rgba(30, 215, 96, 0.4);
+    transform: translateY(-2px);
+}
+
+.track-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.track-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.track-number {
+    color: var(--theme-gray-text);
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 24px;
+}
+
+.track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.track-name {
+    color: var(--theme-text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    transition: color 0.2s ease;
+}
+
+.track-row:hover .track-name {
+    color: var(--theme-accent);
+}
+
+.artist-name {
+    color: var(--theme-gray-text);
+    font-size: 0.82rem;
+}
+
+.artist-cell {
+    background-color: rgba(30, 215, 96, 0.12);
+    color: var(--theme-accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.audio-container {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.inline-audio {
+    width: 100%;
+    height: 38px;
+    border-radius: 20px;
+    outline: none;
+    filter: var(--audio-filter);
+    transition: filter 0.3s ease;
+}
+
+#no-results {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    color: var(--theme-gray-text);
+    font-size: 0.95rem;
+}
+
+/* Active Track Styling */
+.track-row.playing, .track-row.active {
+    border-color: var(--theme-accent);
+    border-left: 4px solid var(--theme-accent);
+    background-color: var(--theme-card-hover);
+}
+
+.track-row.playing .track-name {
+    color: var(--theme-accent);
+}
+
+/* ==========================================
+   5. BOTTOM PLAYER BAR & CONTROLS
+   ========================================== */
+.bottom-player {
+    background-color: var(--theme-base);
+    border-top: 1px solid var(--theme-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.currently-playing {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 200px;
+}
+
+.now-art {
+    width: 44px;
+    height: 44px;
+    background: var(--theme-card);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--theme-border);
+    flex-shrink: 0;
+}
+
+.now-art svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--theme-accent);
+}
+
+.now-info h5 {
+    font-size: 0.85rem;
+    color: var(--theme-text-primary);
+    font-weight: 600;
+}
+
+.now-info p {
+    font-size: 0.75rem;
+    color: var(--theme-gray-text);
+}
+
+.player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-grow: 1;
+    max-width: 520px;
+    margin: 0 20px;
+}
+
 .control-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    margin-bottom: 6px;
+    gap: 12px;
 }
 
 .control-btn {
     background: none;
     border: none;
-    color: var(--theme-text, #ffffff);
+    color: var(--theme-text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
+    padding: 8px;
     border-radius: 50%;
-    transition: background 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 .control-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #1db954; /* Accent color */
-}
-        /* Container for music cards */
-.table-container {
-    padding: 16px;
-    background-color: var(--theme-bg, #121212);
+    background-color: var(--theme-card-hover);
+    color: var(--theme-accent);
 }
 
-/* Individual track card styling */
-.track-row {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--theme-surface, #1e1e1e);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    border: 1px solid var(--theme-border, #282828);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-/* Highlight style when music is playing */
-.track-row.playing, 
-.track-row:hover {
-    border-color: var(--theme-accent, #1db954);
-    transform: translateY(-2px);
-}
-
-/* Header with track number and song info */
-.track-header {
+.player-progress-container {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 10px;
 }
 
-.track-index {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--theme-accent, #1db954);
-    min-width: 24px;
+.time-text {
+    font-size: 0.72rem;
+    color: var(--theme-gray-text);
+    width: 32px;
 }
 
-.track-info {
-    flex: 1;
+.seek-bar {
+    flex-grow: 1;
+    height: 4px;
+    border-radius: 2px;
+    appearance: none;
+    background: var(--theme-light-gray);
+    outline: none;
+    cursor: pointer;
 }
 
-.track-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--theme-text, #ffffff);
-    display: block;
-    margin-bottom: 2px;
+.seek-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--theme-accent);
+    cursor: pointer;
 }
 
-.artist-name {
-    font-size: 0.85rem;
-    color: var(--theme-gray-text, #b3b3b3);
-}
-
-.artist-cell {
+.volume-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 200px;
+    color: var(--theme-gray-text);
     font-size: 0.8rem;
-    color: var(--theme-accent, #1db954);
-    background-color: rgba(29, 185, 84, 0.12);
-    padding: 3px 10px;
-    border-radius: 12px;
-    display: inline-block;
-    margin-top: 6px;
-}
-
-/* Full-width audio player optimization for mobile dragging */
-.audio-wrapper {
-    width: 100%;
-    margin-top: 8px;
-}
-
-audio.inline-audio {
-    width: 100% !important;
-    height: 48px !important; /* Larger hit area for phone screens */
-    border-radius: 30px;
-    outline: none;
-}
-
-@media screen and (max-width: 768px) {
-    .track-row {
-        padding: 14px;
-    }
-    
-    audio.inline-audio {
-        height: 44px !important;
-    }
-} 
-        /* 1. Hide the equalizer by default */
-.track-row .equalizer {
-    opacity: 0;
-    visibility: hidden;
-    display: flex;
-    gap: 3px;
-    align-items: flex-end;
-    height: 16px;
-    transition: opacity 0.3s ease;
-}
-
-/* 2. Add cursor pointer to track rows */
-.track-row {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* 3. Highlight and glow effect for the playing track */
-.track-row.is-playing {
-    background-color: rgba(29, 185, 84, 0.12) !important;
-    border-left: 4px solid #1db954 !important;
-    box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
-}
-
-/* 4. Show equalizer when playing */
-.track-row.is-playing .equalizer {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* 5. Equalizer bar animations */
-.eq-bar {
-    width: 3px;
-    background-color: #1db954;
-    height: 100%;
-    animation: eqBounce 0.8s ease-in-out infinite alternate;
-}
-
-.eq-bar:nth-child(1) { animation-delay: 0.1s; }
-.eq-bar:nth-child(2) { animation-delay: 0.3s; }
-.eq-bar:nth-child(3) { animation-delay: 0.5s; }
-
-@keyframes eqBounce {
-    0% { height: 20%; }
-    100% { height: 100%; }
-}
-        /* ==========================================================
-   Professional Music Player Styling
-   ========================================================== */
-
-/* 1. Track Row Base Styling */
-.track-row {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    user-select: none;
-}
-
-/* Hover Effect for Non-Active Rows */
-.track-row:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(4px);
-}
-
-/* 2. Equalizer Base Container */
-.track-row .equalizer {
-    display: flex;
-    gap: 3px;
-    align-items: flex-end;
-    height: 18px;
-    width: 20px;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-}
-
-/* Equalizer Bars */
-.eq-bar {
-    width: 3px;
-    background: linear-gradient(180deg, #1db954 0%, #1aa34a 100%);
-    border-radius: 2px;
-    height: 20%;
-    transform-origin: bottom;
-}
-
-/* 3. Active Playing State (Professional Highlight) */
-.track-row.is-playing {
-    background: rgba(29, 185, 84, 0.1) !important;
-    box-shadow: inset 4px 0 0 #1db954, 0 4px 20px rgba(29, 185, 84, 0.15);
-    transform: translateX(0);
-}
-
-.track-row.is-playing .track-name {
-    color: #1db954 !important;
-    font-weight: 600;
-}
-
-/* Equalizer Activation & Animation */
-.track-row.is-playing .equalizer {
-    opacity: 1;
-    visibility: visible;
-}
-
-.track-row.is-playing .eq-bar:nth-child(1) {
-    animation: eqBounce 0.7s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
-
-.track-row.is-playing .eq-bar:nth-child(2) {
-    animation: eqBounce 0.5s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
-}
-
-.track-row.is-playing .eq-bar:nth-child(3) {
-    animation: eqBounce 0.9s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
-}
-
-/* Smooth Equalizer Animation Keyframes */
-@keyframes eqBounce {
-    0% {
-        height: 15%;
-    }
-    50% {
-        height: 95%;
-    }
-    100% {
-        height: 40%;
-    }
-}
-
-/* 4. Audio Control Custom Alignment */
-.inline-audio {
-    height: 36px;
-    outline: none;
-    border-radius: 20px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-        /* Base Table Styling */
-#songList {
-    width: 100%;
-}
-
-.track-row {
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-left 0.2s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.track-row:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Equalizer Cell Setup */
-.equalizer {
-    display: flex;
-    gap: 3px;
-    align-items: flex-end;
-    height: 18px;
-    width: 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease;
-}
-
-.eq-bar {
-    width: 3px;
-    background-color: #1db954;
-    border-radius: 1px;
-    height: 20%;
-}
-
-/* Active Playing Row Highlight */
-.track-row.is-playing {
-    background-color: rgba(29, 185, 84, 0.12) !important;
-    border-left: 4px solid #1db954;
-}
-
-.track-row.is-playing .track-name {
-    color: #1db954;
-    font-weight: 600;
-}
-
-/* Show and Animate Equalizer on Active Row */
-.track-row.is-playing .equalizer {
-    opacity: 1;
-    visibility: visible;
-}
-
-.track-row.is-playing .eq-bar:nth-child(1) {
-    animation: eqBounce 0.6s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
-
-.track-row.is-playing .eq-bar:nth-child(2) {
-    animation: eqBounce 0.4s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
-}
-
-.track-row.is-playing .eq-bar:nth-child(3) {
-    animation: eqBounce 0.8s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
-}
-
-@keyframes eqBounce {
-    0% { height: 15%; }
-    100% { height: 100%; }
-}
-        /* Container & Table Setup */
-#songList {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 6px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* Horizontal Track Row Layout */
-.track-row {
-    cursor: pointer;
-    background: #18181b; /* Dark sleek surface */
-    border-radius: 8px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.track-row td {
-    padding: 12px 16px;
-    vertical-align: middle;
-}
-
-/* Rounded corners for the row */
-.track-row td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-.track-row td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-/* Row Hover Effect */
-.track-row:hover {
-    background: #27272a;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-}
-
-/* Equalizer Base Setup */
-.equalizer {
-    display: flex;
-    gap: 3px;
-    align-items: flex-end;
-    height: 18px;
-    width: 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease;
-}
-
-.eq-bar {
-    width: 3px;
-    background: linear-gradient(180deg, #a855f7 0%, #ec4899 100%); /* Neon Purple to Pink */
-    border-radius: 2px;
-    height: 20%;
-}
-
-/* Text & Cell Styling */
-.track-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #f4f4f5;
-    display: block;
-    margin-bottom: 2px;
-    transition: color 0.2s ease;
-}
-
-.artist-name {
-    font-size: 0.85rem;
-    color: #a1a1aa;
-}
-
-.artist-cell {
-    font-size: 0.85rem;
-    color: #cbd5e1;
     font-weight: 500;
 }
 
-/* Native Audio Player Styling */
-.inline-audio {
-    height: 38px;
+/* ==========================================
+   6. MODALS & RESPONSIVE DESIGN
+   ========================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 280px;
-    outline: none;
-    border-radius: 30px;
-    filter: invert(0.9) hue-rotate(190deg); /* Modern dark themed controls */
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
 }
 
-/* ---------------------------------------------------------
-   Active Playing Track Styling (Neon Glow & Gradient)
-   --------------------------------------------------------- */
-.track-row.is-playing {
-    background: linear-gradient(90deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%) !important;
-    border-left: 4px solid #a855f7;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+.modal-content {
+    background: var(--theme-base);
+    border: 1px solid var(--theme-border);
+    padding: 32px;
+    border-radius: 12px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
-.track-row.is-playing .track-name {
-    color: #c084fc !important; /* Bright Neon Accent */
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 1.2rem;
+    color: var(--theme-gray-text);
+    cursor: pointer;
+    border: none;
+    background: none;
 }
 
-.track-row.is-playing .equalizer {
-    opacity: 1;
-    visibility: visible;
+.modal-close:hover {
+    color: var(--theme-text-primary);
 }
 
-/* Equalizer Bar Animations */
-.track-row.is-playing .eq-bar:nth-child(1) {
-    animation: eqBounce 0.6s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+/* Responsive Styles */
+@media (max-width: 850px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        display: none;
+    }
+    .bottom-player {
+        padding: 0 16px;
+    }
+    .volume-controls {
+        display: none;
+    }
+    .banner-title {
+        font-size: 2rem;
+    }
+    .album-art {
+        width: 100px;
+        height: 100px;
+    }
+    .album-art svg {
+        width: 42px;
+        height: 42px;
+    }
 }
-
-.track-row.is-playing .eq-bar:nth-child(2) {
-    animation: eqBounce 0.4s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
-}
-
-.track-row.is-playing .eq-bar:nth-child(3) {
-    animation: eqBounce 0.8s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
-}
-
-@keyframes eqBounce {
-    0% { height: 15%; }
-    100% { height: 100%; }
-}
-    </style>
 </head>
 <body>
 
@@ -1125,447 +729,371 @@ audio.inline-audio {
                         <th>Audio Player</th>
                     </tr>
                 </thead>
-                <tbody id="songList">
-<tbody id="songList">
+               <div id="songList">
 
     <!-- Track 01 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">01</span>
+                <div class="track-info">
+                    <span class="track-name">Maje Maje tobo</span>
+                    <span class="artist-name">Rabindro_Songith</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Maje Maje tobo</span>
-                <span class="artist-name">Rabindro_Songith</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
-                <source src=" assets/maje_maje_tobo.mp4" type="audio/mp4">
+                <source src="assets/maje_maje_tobo.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 02 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">02</span>
+                <div class="track-info">
+                    <span class="track-name">Humnaba mere</span>
+                    <span class="artist-name">Jubin</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Humnaba mere</span>
-                <span class="artist-name">Jubin</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="assets/humnaba_mere.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 03 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">03</span>
+                <div class="track-info">
+                    <span class="track-name">Main agar kahu</span>
+                    <span class="artist-name">Shreya Goshal</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Main agar kahu</span>
-                <span class="artist-name">Shreya Goshal</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="assets/main_agar_kahu.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 04 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">04</span>
+                <div class="track-info">
+                    <span class="track-name">Modhu maloti</span>
+                    <span class="artist-name">Shandhya mukharjee</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Modhu maloti</span>
-                <span class="artist-name">Shandhya mukharjee</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="assets/modhu_maloti.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 05 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">05</span>
+                <div class="track-info">
+                    <span class="track-name">Dewana</span>
+                    <span class="artist-name">Shreya Gushal</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Dewana</span>
-                <span class="artist-name">Shreya Gushal</span>
-            </div>
-        </td>
-        <td class="artist-cell">Sheikh Marjan Satu</td>
-        <td>
+            <div class="artist-cell">"Sheikh Marjan Satu"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Music/videos/satu1.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 06 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">06</span>
+                <div class="track-info">
+                    <span class="track-name">Bolo Sathiya</span>
+                    <span class="artist-name">#wd'nK</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Bolo Sathiya</span>
-                <span class="artist-name">#wd'nK</span>
-            </div>
-        </td>
-        <td class="artist-cell">Sheikh Marjan Satu</td>
-        <td>
+            <div class="artist-cell">"Sheikh Marjan Satu"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="satu2.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 07 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">07</span>
+                <div class="track-info">
+                    <span class="track-name">Prakton(ex🐍)</span>
+                    <span class="artist-name">Emon Chokroborthi</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Prakton(ex🐍)</span>
-                <span class="artist-name">Emon Chokroborthi</span>
-            </div>
-        </td>
-        <td class="artist-cell">Shiekh Marjan Satu</td>
-        <td>
+            <div class="artist-cell">"Shiekh Marjan Satu"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="satu3.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 08 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">08</span>
+                <div class="track-info">
+                    <span class="track-name">Ami Je Tumar</span>
+                    <span class="artist-name">Shreya Goshal</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Ami Je Tumar</span>
-                <span class="artist-name">Shreya Goshal</span>
-            </div>
-        </td>
-        <td class="artist-cell">Sheikh Marjan Satu</td>
-        <td>
+            <div class="artist-cell">"Sheikh Marjan Satu"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="satu4.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 09 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">09</span>
+                <div class="track-info">
+                    <span class="track-name">Saiyaraa</span>
+                    <span class="artist-name">Shreya Goshal</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Saiyaraa</span>
-                <span class="artist-name">Shreya Goshal</span>
-            </div>
-        </td>
-        <td class="artist-cell">Sheikh Marjan Satu</td>
-        <td>
+            <div class="artist-cell">"Sheikh Marjan Satu"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="satu5.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 10 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">10</span>
+                <div class="track-info">
+                    <span class="track-name">Aro Akber Cholo Fire jai</span>
+                    <span class="artist-name">Rupam Islam</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Aro Akber Cholo Fire jai</span>
-                <span class="artist-name">Rupam Islam</span>
-            </div>
-        </td>
-        <td class="artist-cell">Ashfiqur Rahman Sani</td>
-        <td>
+            <div class="artist-cell">"Ashfiqur Rahman Sani"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="sani1.ogg" type="audio/ogg">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 11 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">11</span>
+                <div class="track-info">
+                    <span class="track-name">Ei Bristy Beja Rate</span>
+                    <span class="artist-name">George Lincolin D'Costa</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Ei Bristy Beja Rate</span>
-                <span class="artist-name">George Lincolin D'Costa</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana ELI</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana ELI"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Ei_bristy _veja _rate.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 12 -->
-    <tr class="track-row"> 
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">12</span>
+                <div class="track-info">
+                    <span class="track-name">O Je mane na mana</span>
+                    <span class="artist-name">Rabindrnath Tagor</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">O Je mane na mana</span>
-                <span class="artist-name">Rabindrnath Tagor</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Eli2.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 13 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">13</span>
+                <div class="track-info">
+                    <span class="track-name">Saiyaraa</span>
+                    <span class="artist-name">Shreya Goshal</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Saiyaraa</span>
-                <span class="artist-name">Shreya Goshal</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="eli3.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 14 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">14</span>
+                <div class="track-info">
+                    <span class="track-name">Itna Na Mujhse Tu Pyaar Badha</span>
+                    <span class="artist-name">Sunil D, Asha P</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Itna Na Mujhse Tu Pyaar Badha</span>
-                <span class="artist-name">Sunil D, Asha P</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Eli3_2.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 15 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">15</span>
+                <div class="track-info">
+                    <span class="track-name">Ke bashi Bazay re</span>
+                    <span class="artist-name">Anila</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Ke bashi Bazay re</span>
-                <span class="artist-name">Anila</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin SULTANA Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin SULTANA Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Eli4.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 16 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">16</span>
+                <div class="track-info">
+                    <span class="track-name">Buje Na Shea Buje Na</span>
+                    <span class="artist-name">Arjith Sing</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Buje Na Shea Buje Na</span>
-                <span class="artist-name">Arjith Sing</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Buje_na.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 17 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">17</span>
+                <div class="track-info">
+                    <span class="track-name">Khabi to Pass mere aoo</span>
+                    <span class="artist-name">Atif Aslam</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">Khabi to Pass mere aoo</span>
-                <span class="artist-name">Atif Aslam</span>
-            </div>
-        </td>
-        <td class="artist-cell">Yesmin Sultana Eli</td>
-        <td>
+            <div class="artist-cell">"Yesmin Sultana Eli"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="Khabi_to.mp4" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 18 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">18</span>
+                <div class="track-info">
+                    <span class="track-name">TITLE_HERE</span>
+                    <span class="artist-name">ARTIST_HERE</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">TITLE_HERE</span>
-                <span class="artist-name">ARTIST_HERE</span>
-            </div>
-        </td>
-        <td class="artist-cell">SINGER_HERE</td>
-        <td>
+            <div class="artist-cell">"SINGER_HERE"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="AUDIO_SRC_HERE" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
     <!-- Track 19 -->
-    <tr class="track-row">
-        <td>
-            <div class="equalizer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+    <div class="track-row">
+        <div class="track-header">
+            <div class="track-left">
+                <span class="track-number">19</span>
+                <div class="track-info">
+                    <span class="track-name">TITLE_HERE</span>
+                    <span class="artist-name">ARTIST_HERE</span>
+                </div>
             </div>
-        </td>
-        <td>
-            <div class="track-info">
-                <span class="track-name">TITLE_HERE</span>
-                <span class="artist-name">ARTIST_HERE</span>
-            </div>
-        </td>
-        <td class="artist-cell">SINGER_HERE</td>
-        <td>
+            <div class="artist-cell">"SINGER_HERE"</div>
+        </div>
+        <div class="audio-container">
             <audio class="inline-audio" controls preload="metadata">
                 <source src="AUDIO_SRC_HERE" type="audio/mp4">
             </audio>
-        </td>
-    </tr>
+        </div>
+    </div>
 
-</tbody>
+</div>
+
             </table>
 
             <div id="no-results">No songs or artists found matching your search term.</div>
@@ -1749,227 +1277,240 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentTrackIndex = -1;
     let activeAudio = null;
+    /* ==========================================
+   1. GLOBAL VARIABLES & INITIALIZATION
+   ========================================== */
+let currentAudio = null;
+let currentTrackIndex = -1;
 
-    // ১. Next Track প্লে করার ফাংশন
-    function playNextTrack() {
-        if (allAudios.length === 0) return;
+const trackRows = document.querySelectorAll('.track-row');
+const audioElements = document.querySelectorAll('.inline-audio');
+const searchInput = document.getElementById('searchInput');
+const noResults = document.getElementById('no-results');
 
-        let nextIndex = currentTrackIndex + 1;
-        // গান শেষ হয়ে গেলে আবার ১ নম্বর গানে ফিরে যাবে (Loop Navigation)
-        if (nextIndex >= allAudios.length) {
-            nextIndex = 0;
-        }
+const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+const nowPlayingArtist = document.getElementById('nowPlayingArtist');
+const currentTimeEl = document.getElementById('currentTime');
+const durationTimeEl = document.getElementById('durationTime');
+const seekBar = document.getElementById('seekBar');
 
-        if (activeAudio) {
-            activeAudio.currentTime = 0;
-        }
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const aboutModal = document.getElementById('aboutModal');
 
-        allAudios[nextIndex].play();
+/* ==========================================
+   2. THEME SWITCHER (LIGHT / DARK)
+   ========================================== */
+function toggleTheme() {
+    const body = document.body;
+    const themeLabel = document.getElementById('themeLabel');
+    const currentTheme = body.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    body.setAttribute('data-theme', newTheme);
+    
+    if (themeLabel) {
+        themeLabel.innerText = newTheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
     }
+}
 
-    // ২. Previous Track প্লে করার ফাংশন
-    function playPreviousTrack() {
-        if (allAudios.length === 0) return;
+/* ==========================================
+   3. NAVIGATION TABS & MODAL CONTROLS
+   ========================================== */
+function switchTab(element) {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    element.classList.add('active');
+}
 
-        let prevIndex = currentTrackIndex - 1;
-        // ১ নম্বর গানে থাকা অবস্থায় প্রিভিয়াস চাপলে শেষ গানে চলে যাবে
-        if (prevIndex < 0) {
-            prevIndex = allAudios.length - 1;
-        }
-
-        if (activeAudio) {
-            activeAudio.currentTime = 0;
-        }
-
-        allAudios[prevIndex].play();
+function focusSearch() {
+    if (searchInput) {
+        searchInput.focus();
     }
+}
 
-    // ৩. Audio Element Event Listeners
-    allAudios.forEach((audio, index) => {
-        // প্লে শুরু হলে বর্তমান ট্র্যাক ইনডেক্স আপডেট হবে
-        audio.addEventListener('play', function () {
-            // অন্য গান চললে তা বন্ধ করা
-            allAudios.forEach(a => {
-                if (a !== audio) a.pause();
-            });
-            activeAudio = audio;
-            currentTrackIndex = index;
-        });
+function openModal() {
+    if (aboutModal) {
+        aboutModal.style.display = 'flex';
+    }
+}
 
-        // গান শেষ হলে স্বয়ংক্রিয়ভাবে পরের গান চালু হবে (Auto-play Next)
-        audio.addEventListener('ended', function () {
-            playNextTrack();
-        });
+function closeModal() {
+    if (aboutModal) {
+        aboutModal.style.display = 'none';
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target === aboutModal) {
+        closeModal();
+    }
+};
+
+/* ==========================================
+   4. SEARCH / FILTER FUNCTIONALITY
+   ========================================== */
+function filterSongs() {
+    const filter = searchInput.value.toLowerCase().trim();
+    let hasVisibleTracks = false;
+
+    trackRows.forEach(row => {
+        const songName = row.querySelector('.track-name')?.innerText.toLowerCase() || '';
+        const artistName = row.querySelector('.artist-name')?.innerText.toLowerCase() || '';
+        const singerName = row.querySelector('.artist-cell')?.innerText.toLowerCase() || '';
+
+        if (songName.includes(filter) || artistName.includes(filter) || singerName.includes(filter)) {
+            row.style.display = 'flex';
+            hasVisibleTracks = true;
+        } else {
+            row.style.display = 'none';
+        }
     });
 
-    // ৪. Button Event Listeners যুক্ত করা
-    if (nextBtn) {
-        nextBtn.addEventListener('click', playNextTrack);
+    if (noResults) {
+        noResults.style.display = hasVisibleTracks ? 'none' : 'block';
     }
+}
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', playPreviousTrack);
-    }
-});
-        document.addEventListener('DOMContentLoaded', function () {
-    const allAudios = document.querySelectorAll('audio.inline-audio');
+/* ==========================================
+   5. AUDIO PLAYER CONTROLS & AUTOPLAY SYNC
+   ========================================== */
 
-    allAudios.forEach((audio, index) => {
-        
-        // 1. Pause all other tracks when a new one starts playing
-        audio.addEventListener('play', function () {
-            allAudios.forEach((otherAudio) => {
-                if (otherAudio !== audio) {
-                    otherAudio.pause();
-                    otherAudio.currentTime = 0; // Reset other tracks to start
-                }
-            });
+// Stop all playing audio and clear active visual states
+function clearActiveStates() {
+    audioElements.forEach(audio => audio.pause());
+    trackRows.forEach(row => row.classList.remove('playing', 'active'));
+}
 
-            // Highlight the active playing card
-            document.querySelectorAll('.track-row').forEach(row => row.classList.remove('playing'));
-            const parentRow = audio.closest('.track-row');
-            if (parentRow) parentRow.classList.add('playing');
-        });
+// Format time in seconds to mm:ss format
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
 
-        // 2. Automatically play the next track when the current song ends
-        audio.addEventListener('ended', function () {
-            const nextIndex = index + 1;
-            
-            if (nextIndex < allAudios.length) {
-                allAudios[nextIndex].play();
+// Primary function to play a specific track by index
+function playTrack(index) {
+    if (index < 0 || index >= trackRows.length) return;
+
+    clearActiveStates();
+
+    const row = trackRows[index];
+    const audio = row.querySelector('.inline-audio');
+
+    currentAudio = audio;
+    currentTrackIndex = index;
+
+    // Highlight the currently active track card visually
+    row.classList.add('playing', 'active');
+
+    // Update bottom player track metadata
+    const title = row.querySelector('.track-name')?.innerText || "Unknown Title";
+    const singer = row.querySelector('.artist-cell')?.innerText.replace(/"/g, '') || "Unknown Singer";
+
+    if (nowPlayingTitle) nowPlayingTitle.innerText = title;
+    if (nowPlayingArtist) nowPlayingArtist.innerText = singer;
+
+    // Play the audio
+    audio.play();
+}
+
+/* ==========================================
+   6. EVENT LISTENERS FOR TRACKS
+   ========================================== */
+trackRows.forEach((row, index) => {
+    const audio = row.querySelector('.inline-audio');
+
+    // Play or pause when clicking anywhere on the track card
+    row.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'AUDIO' && !e.target.closest('audio')) {
+            if (audio.paused) {
+                playTrack(index);
             } else {
-                // Loop back to the first song if the playlist finishes
-                allAudios[0].play();
+                audio.pause();
+                row.classList.remove('playing', 'active');
             }
-        });
+        }
     });
-});
-        document.addEventListener('DOMContentLoaded', function () {
-    const trackRows = document.querySelectorAll('.track-row');
-    const allAudios = document.querySelectorAll('audio.inline-audio');
 
-    trackRows.forEach((row) => {
-        const audio = row.querySelector('audio');
+    // Update playing status when playback starts
+    audio.addEventListener('play', () => {
+        if (currentAudio && currentAudio !== audio) {
+            clearActiveStates();
+        }
+        currentAudio = audio;
+        currentTrackIndex = index;
+        row.classList.add('playing', 'active');
 
-        // 1. Play or pause track when clicking anywhere on the row
-        row.addEventListener('click', function (e) {
-            // Prevent event collision when clicking directly on native audio controls
-            if (e.target.tagName === 'AUDIO' || e.target.closest('audio')) {
-                return;
+        const title = row.querySelector('.track-name')?.innerText || "Unknown Title";
+        const singer = row.querySelector('.artist-cell')?.innerText.replace(/"/g, '') || "Unknown Singer";
+
+        if (nowPlayingTitle) nowPlayingTitle.innerText = title;
+        if (nowPlayingArtist) nowPlayingArtist.innerText = singer;
+    });
+
+    // Remove highlight when paused
+    audio.addEventListener('pause', () => {
+        row.classList.remove('playing', 'active');
+    });
+
+    // Sync track progress with current time and seekbar slider
+    audio.addEventListener('timeupdate', () => {
+        if (currentAudio === audio) {
+            if (currentTimeEl) currentTimeEl.innerText = formatTime(audio.currentTime);
+            if (durationTimeEl) durationTimeEl.innerText = formatTime(audio.duration);
+            
+            if (seekBar && audio.duration) {
+                seekBar.value = (audio.currentTime / audio.duration) * 100;
             }
+        }
+    });
 
-            if (audio) {
-                if (audio.paused) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                }
-            }
-        });
-
-        if (audio) {
-            // 2. Handle audio play event
-            audio.addEventListener('play', function () {
-                // Pause all other playing audio elements
-                allAudios.forEach((otherAudio) => {
-                    if (otherAudio !== audio) {
-                        otherAudio.pause();
-                        otherAudio.currentTime = 0;
-                    }
-                });
-
-                // Remove highlight from all rows
-                trackRows.forEach((r) => r.classList.remove('is-playing'));
-
-                // Add active highlight class to the current row
-                row.classList.add('is-playing');
-            });
-
-            // 3. Handle audio pause event
-            audio.addEventListener('pause', function () {
-                row.classList.remove('is-playing');
-            });
-
-            // 4. Play next track automatically when current song ends
-            audio.addEventListener('ended', function () {
-                row.classList.remove('is-playing');
-
-                const currentRow = audio.closest('.track-row');
-                const nextRow = currentRow ? currentRow.nextElementSibling : null;
-
-                if (nextRow) {
-                    const nextAudio = nextRow.querySelector('audio');
-                    if (nextAudio) {
-                        nextAudio.play();
-                    }
-                }
-            });
+    // Autoplay the next song when the current song finishes
+    audio.addEventListener('ended', () => {
+        row.classList.remove('playing', 'active');
+        if (currentTrackIndex + 1 < trackRows.length) {
+            playTrack(currentTrackIndex + 1);
         }
     });
 });
-        document.addEventListener('DOMContentLoaded', function () {
-    const trackRows = document.querySelectorAll('.track-row');
-    const allAudios = document.querySelectorAll('audio.inline-audio');
 
-    trackRows.forEach((row) => {
-        const audio = row.querySelector('audio');
-
-        // Play/Pause audio when clicking anywhere on the horizontal row
-        row.addEventListener('click', function (e) {
-            // Prevent event collision when clicking native player controls directly
-            if (e.target.tagName === 'AUDIO' || e.target.closest('audio')) {
-                return;
-            }
-
-            if (audio) {
-                if (audio.paused) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                }
-            }
-        });
-
-        if (audio) {
-            // Handle Play State
-            audio.addEventListener('play', function () {
-                // Pause all other playing audio tracks
-                allAudios.forEach((otherAudio) => {
-                    if (otherAudio !== audio) {
-                        otherAudio.pause();
-                        otherAudio.currentTime = 0;
-                    }
-                });
-
-                // Clear highlights from all rows
-                trackRows.forEach((r) => r.classList.remove('is-playing'));
-
-                // Highlight active row
-                row.classList.add('is-playing');
-            });
-
-            // Handle Pause State
-            audio.addEventListener('pause', function () {
-                row.classList.remove('is-playing');
-            });
-
-            // Handle Track Ended (Auto-Play Next)
-            audio.addEventListener('ended', function () {
-                row.classList.remove('is-playing');
-
-                const currentRow = audio.closest('.track-row');
-                const nextRow = currentRow ? currentRow.nextElementSibling : null;
-
-                if (nextRow) {
-                    const nextAudio = nextRow.querySelector('audio');
-                    if (nextAudio) {
-                        nextAudio.play();
-                    }
-                }
-            });
+/* ==========================================
+   7. SEEKBAR & PLAYER BUTTON CONTROLS
+   ========================================== */
+if (seekBar) {
+    seekBar.addEventListener('input', () => {
+        if (currentAudio && currentAudio.duration) {
+            currentAudio.currentTime = (seekBar.value / 100) * currentAudio.duration;
         }
     });
-});
+}
+
+if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+        if (currentTrackIndex > 0) {
+            playTrack(currentTrackIndex - 1);
+        }
+    });
+}
+
+if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+        if (currentTrackIndex < trackRows.length - 1) {
+            playTrack(currentTrackIndex + 1);
+        }
+    });
+}
+
+function playFirstTrack() {
+    if (trackRows.length > 0) {
+        playTrack(0);
+    }
+}
+
+
     </script>
 
 </body>
