@@ -1,9 +1,6 @@
-// App State Variables
-let currentTrackIndex = -1;
-let isPlaying = false;
-
-// DOM Elements
-const audio = document.getElementById('globalAudio');
+// DOM Elements Selection
+const globalAudio = document.getElementById('globalAudio');
+const songList = document.getElementById('songList');
 const trackRows = Array.from(document.querySelectorAll('.track-row'));
 const playPauseBtn = document.getElementById('playPauseBtn');
 const playIcon = document.getElementById('playIcon');
@@ -16,67 +13,50 @@ const currentTimeEl = document.getElementById('currentTime');
 const durationTimeEl = document.getElementById('durationTime');
 const nowPlayingTitle = document.getElementById('nowPlayingTitle');
 const nowPlayingArtist = document.getElementById('nowPlayingArtist');
+const searchInput = document.getElementById('searchInput');
+const noResults = document.getElementById('no-results');
+const aboutModal = document.getElementById('aboutModal');
 
-// Initialize Player Event Listeners
-function initPlayer() {
-    trackRows.forEach((row, index) => {
-        row.addEventListener('click', () => playTrack(index));
-    });
+let currentTrackIndex = -1;
+let isPlaying = false;
 
-    playPauseBtn.addEventListener('click', togglePlayPause);
-    prevBtn.addEventListener('click', playPreviousTrack);
-    nextBtn.addEventListener('click', playNextTrack);
-
-    audio.addEventListener('timeupdate', updateSeekBar);
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', playNextTrack);
-
-    seekBar.addEventListener('input', seekAudio);
-    volumeBar.addEventListener('input', adjustVolume);
+// Format Time (Seconds -> MM:SS)
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-// Play Specific Track by Index
-function playTrack(index) {
+// Load and Play Track by Index
+function loadAndPlayTrack(index) {
     if (index < 0 || index >= trackRows.length) return;
 
+    // Highlight row in active state
+    trackRows.forEach(row => row.classList.remove('active-track'));
+    
     currentTrackIndex = index;
     const selectedRow = trackRows[currentTrackIndex];
+    selectedRow.classList.add('active-track');
+
     const src = selectedRow.getAttribute('data-src');
     const title = selectedRow.getAttribute('data-title');
     const artist = selectedRow.getAttribute('data-artist');
 
-    // UI Updates
-    trackRows.forEach(row => row.classList.remove('active-track'));
-    selectedRow.classList.add('active-track');
-
+    globalAudio.src = src;
     nowPlayingTitle.textContent = title;
     nowPlayingArtist.textContent = artist;
 
-    // Audio Playback
-    audio.src = src;
-    audio.play();
-    isPlaying = true;
-    updateControlIcons();
+    globalAudio.play()
+        .then(() => {
+            isPlaying = true;
+            updatePlayPauseUI();
+        })
+        .catch(err => console.error("Error playing audio:", err));
 }
 
-// Toggle Play/Pause State
-function togglePlayPause() {
-    if (currentTrackIndex === -1) {
-        playTrack(0);
-        return;
-    }
-
-    if (isPlaying) {
-        audio.pause();
-        isPlaying = false;
-    } else {
-        audio.play();
-        isPlaying = true;
-    }
-    updateControlIcons();
-}
-
-function updateControlIcons() {
+// Update Play/Pause Button Icons
+function updatePlayPauseUI() {
     if (isPlaying) {
         playIcon.style.display = 'none';
         pauseIcon.style.display = 'block';
@@ -86,64 +66,98 @@ function updateControlIcons() {
     }
 }
 
-function playNextTrack() {
-    if (trackRows.length === 0) return;
-    let nextIndex = currentTrackIndex + 1;
-    if (nextIndex >= trackRows.length) nextIndex = 0;
-    playTrack(nextIndex);
+// Toggle Play / Pause
+function togglePlayPause() {
+    if (currentTrackIndex === -1) {
+        // Play first track if nothing is selected yet
+        loadAndPlayTrack(0);
+        return;
+    }
+
+    if (globalAudio.paused) {
+        globalAudio.play();
+        isPlaying = true;
+    } else {
+        globalAudio.pause();
+        isPlaying = false;
+    }
+    updatePlayPauseUI();
 }
 
-function playPreviousTrack() {
-    if (trackRows.length === 0) return;
-    let prevIndex = currentTrackIndex - 1;
-    if (prevIndex < 0) prevIndex = trackRows.length - 1;
-    playTrack(prevIndex);
-}
-
+// Play First Track (from Playlist Main Play Button)
 function playFirstTrack() {
-    playTrack(0);
+    loadAndPlayTrack(0);
 }
 
-// Progress Bar & Duration Formatters
-function updateSeekBar() {
-    if (!isNaN(audio.duration)) {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        seekBar.value = progress;
-        currentTimeEl.textContent = formatTime(audio.currentTime);
+// Row Event Listeners
+trackRows.forEach((row, index) => {
+    row.addEventListener('click', () => {
+        loadAndPlayTrack(index);
+    });
+});
+
+// Control Buttons
+playPauseBtn.addEventListener('click', togglePlayPause);
+
+prevBtn.addEventListener('click', () => {
+    if (currentTrackIndex > 0) {
+        loadAndPlayTrack(currentTrackIndex - 1);
+    } else {
+        loadAndPlayTrack(trackRows.length - 1); // Loop to end
     }
-}
+});
 
-function updateDuration() {
-    durationTimeEl.textContent = formatTime(audio.duration);
-}
-
-function seekAudio() {
-    if (!isNaN(audio.duration)) {
-        const seekTime = (seekBar.value / 100) * audio.duration;
-        audio.currentTime = seekTime;
+nextBtn.addEventListener('click', () => {
+    if (currentTrackIndex < trackRows.length - 1) {
+        loadAndPlayTrack(currentTrackIndex + 1);
+    } else {
+        loadAndPlayTrack(0); // Loop to start
     }
-}
+});
 
-function adjustVolume() {
-    audio.volume = volumeBar.value / 100;
-}
+// Audio Progress & Seek Bar
+globalAudio.addEventListener('timeupdate', () => {
+    if (globalAudio.duration) {
+        const progressPercent = (globalAudio.currentTime / globalAudio.duration) * 100;
+        seekBar.value = progressPercent;
+        currentTimeEl.textContent = formatTime(globalAudio.currentTime);
+        durationTimeEl.textContent = formatTime(globalAudio.duration);
+    }
+});
 
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-}
+seekBar.addEventListener('input', () => {
+    if (globalAudio.duration) {
+        const seekTime = (seekBar.value / 100) * globalAudio.duration;
+        globalAudio.currentTime = seekTime;
+    }
+});
 
-// Live Search Logic
+// Auto Next Track on Song End
+globalAudio.addEventListener('ended', () => {
+    if (currentTrackIndex < trackRows.length - 1) {
+        loadAndPlayTrack(currentTrackIndex + 1);
+    } else {
+        isPlaying = false;
+        updatePlayPauseUI();
+    }
+});
+
+// Volume Control
+volumeBar.addEventListener('input', () => {
+    globalAudio.volume = volumeBar.value / 100;
+});
+
+// Search & Filter Tracks
 function filterSongs() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
+    const query = searchInput.value.toLowerCase().trim();
     let visibleCount = 0;
 
     trackRows.forEach(row => {
         const title = row.getAttribute('data-title').toLowerCase();
         const artist = row.getAttribute('data-artist').toLowerCase();
+        const originalArtist = row.querySelector('.artist-name').textContent.toLowerCase();
 
-        if (title.includes(query) || artist.includes(query)) {
+        if (title.includes(query) || artist.includes(query) || originalArtist.includes(query)) {
             row.style.display = 'grid';
             visibleCount++;
         } else {
@@ -151,27 +165,34 @@ function filterSongs() {
         }
     });
 
-    const noResults = document.getElementById('no-results');
-    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    if (visibleCount === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
 }
 
-// Interface Helper Functions
 function focusSearch() {
-    document.getElementById('searchInput').focus();
+    searchInput.focus();
 }
 
+// Sidebar Navigation Tab Switching
 function switchTab(element) {
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     element.classList.add('active');
 }
 
+// About Modal Handling
 function openModal() {
-    document.getElementById('aboutModal').style.display = 'flex';
+    aboutModal.style.display = 'flex';
 }
 
 function closeModal() {
-    document.getElementById('aboutModal').style.display = 'none';
+    aboutModal.style.display = 'none';
 }
 
-// Boot System
-document.addEventListener('DOMContentLoaded', initPlayer);
+window.addEventListener('click', (event) => {
+    if (event.target === aboutModal) {
+        closeModal();
+    }
+});
