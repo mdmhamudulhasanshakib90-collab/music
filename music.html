@@ -593,6 +593,32 @@
             .bottom-player { grid-template-columns: 1fr 1fr; }
             .volume-controls { display: none; }
         }
+        /* Control Buttons Styling */
+.control-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 6px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: var(--theme-text, #ffffff);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #1db954; /* Accent color */
+}
     </style>
 </head>
 <body>
@@ -1155,6 +1181,19 @@ Itna Na Mujhse Tu Pyaar Badha</span>
         <div class="volume-controls">
             <span>🎧 Friend's Voice Web Engine</span>
         </div>
+        <!-- HTML Structure -->
+<div class="control-buttons">
+    <button class="control-btn" id="prevBtn" title="Previous Song">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+        </svg>
+    </button>
+    <button class="control-btn" id="nextBtn" title="Next Song">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+        </svg>
+    </button>
+</div>
     </footer>
 
     <!-- About Us Modal -->
@@ -1285,6 +1324,76 @@ Itna Na Mujhse Tu Pyaar Badha</span>
         function closeModal() {
             document.getElementById('aboutModal').style.display = 'none';
         }
+        // JavaScript Implementation
+document.addEventListener('DOMContentLoaded', function () {
+    const allAudios = document.querySelectorAll('audio');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    let currentTrackIndex = -1;
+    let activeAudio = null;
+
+    // ১. Next Track প্লে করার ফাংশন
+    function playNextTrack() {
+        if (allAudios.length === 0) return;
+
+        let nextIndex = currentTrackIndex + 1;
+        // গান শেষ হয়ে গেলে আবার ১ নম্বর গানে ফিরে যাবে (Loop Navigation)
+        if (nextIndex >= allAudios.length) {
+            nextIndex = 0;
+        }
+
+        if (activeAudio) {
+            activeAudio.currentTime = 0;
+        }
+
+        allAudios[nextIndex].play();
+    }
+
+    // ২. Previous Track প্লে করার ফাংশন
+    function playPreviousTrack() {
+        if (allAudios.length === 0) return;
+
+        let prevIndex = currentTrackIndex - 1;
+        // ১ নম্বর গানে থাকা অবস্থায় প্রিভিয়াস চাপলে শেষ গানে চলে যাবে
+        if (prevIndex < 0) {
+            prevIndex = allAudios.length - 1;
+        }
+
+        if (activeAudio) {
+            activeAudio.currentTime = 0;
+        }
+
+        allAudios[prevIndex].play();
+    }
+
+    // ৩. Audio Element Event Listeners
+    allAudios.forEach((audio, index) => {
+        // প্লে শুরু হলে বর্তমান ট্র্যাক ইনডেক্স আপডেট হবে
+        audio.addEventListener('play', function () {
+            // অন্য গান চললে তা বন্ধ করা
+            allAudios.forEach(a => {
+                if (a !== audio) a.pause();
+            });
+            activeAudio = audio;
+            currentTrackIndex = index;
+        });
+
+        // গান শেষ হলে স্বয়ংক্রিয়ভাবে পরের গান চালু হবে (Auto-play Next)
+        audio.addEventListener('ended', function () {
+            playNextTrack();
+        });
+    });
+
+    // ৪. Button Event Listeners যুক্ত করা
+    if (nextBtn) {
+        nextBtn.addEventListener('click', playNextTrack);
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', playPreviousTrack);
+    }
+});
     </script>
 
 </body>
