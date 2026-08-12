@@ -847,6 +847,73 @@ audio.inline-audio {
     border-radius: 20px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
+        /* Base Table Styling */
+#songList {
+    width: 100%;
+}
+
+.track-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.track-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Equalizer Cell Setup */
+.equalizer {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 18px;
+    width: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.eq-bar {
+    width: 3px;
+    background-color: #1db954;
+    border-radius: 1px;
+    height: 20%;
+}
+
+/* Active Playing Row Highlight */
+.track-row.is-playing {
+    background-color: rgba(29, 185, 84, 0.12) !important;
+    border-left: 4px solid #1db954;
+}
+
+.track-row.is-playing .track-name {
+    color: #1db954;
+    font-weight: 600;
+}
+
+/* Show and Animate Equalizer on Active Row */
+.track-row.is-playing .equalizer {
+    opacity: 1;
+    visibility: visible;
+}
+
+.track-row.is-playing .eq-bar:nth-child(1) {
+    animation: eqBounce 0.6s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.track-row.is-playing .eq-bar:nth-child(2) {
+    animation: eqBounce 0.4s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
+}
+
+.track-row.is-playing .eq-bar:nth-child(3) {
+    animation: eqBounce 0.8s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
+}
+
+@keyframes eqBounce {
+    0% { height: 15%; }
+    100% { height: 100%; }
+}
     </style>
 </head>
 <body>
