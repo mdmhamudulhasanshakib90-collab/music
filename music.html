@@ -619,6 +619,142 @@
     background-color: rgba(255, 255, 255, 0.1);
     color: #1db954; /* Accent color */
 }
+        /* Container for music cards */
+.table-container {
+    padding: 16px;
+    background-color: var(--theme-bg, #121212);
+}
+
+/* Individual track card styling */
+.track-row {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--theme-surface, #1e1e1e);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--theme-border, #282828);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Highlight style when music is playing */
+.track-row.playing, 
+.track-row:hover {
+    border-color: var(--theme-accent, #1db954);
+    transform: translateY(-2px);
+}
+
+/* Header with track number and song info */
+.track-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.track-index {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--theme-accent, #1db954);
+    min-width: 24px;
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--theme-text, #ffffff);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.artist-name {
+    font-size: 0.85rem;
+    color: var(--theme-gray-text, #b3b3b3);
+}
+
+.artist-cell {
+    font-size: 0.8rem;
+    color: var(--theme-accent, #1db954);
+    background-color: rgba(29, 185, 84, 0.12);
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-top: 6px;
+}
+
+/* Full-width audio player optimization for mobile dragging */
+.audio-wrapper {
+    width: 100%;
+    margin-top: 8px;
+}
+
+audio.inline-audio {
+    width: 100% !important;
+    height: 48px !important; /* Larger hit area for phone screens */
+    border-radius: 30px;
+    outline: none;
+}
+
+@media screen and (max-width: 768px) {
+    .track-row {
+        padding: 14px;
+    }
+    
+    audio.inline-audio {
+        height: 44px !important;
+    }
+} 
+        /* 1. Hide the equalizer by default */
+.track-row .equalizer {
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 16px;
+    transition: opacity 0.3s ease;
+}
+
+/* 2. Add cursor pointer to track rows */
+.track-row {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 3. Highlight and glow effect for the playing track */
+.track-row.is-playing {
+    background-color: rgba(29, 185, 84, 0.12) !important;
+    border-left: 4px solid #1db954 !important;
+    box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+}
+
+/* 4. Show equalizer when playing */
+.track-row.is-playing .equalizer {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 5. Equalizer bar animations */
+.eq-bar {
+    width: 3px;
+    background-color: #1db954;
+    height: 100%;
+    animation: eqBounce 0.8s ease-in-out infinite alternate;
+}
+
+.eq-bar:nth-child(1) { animation-delay: 0.1s; }
+.eq-bar:nth-child(2) { animation-delay: 0.3s; }
+.eq-bar:nth-child(3) { animation-delay: 0.5s; }
+
+@keyframes eqBounce {
+    0% { height: 20%; }
+    100% { height: 100%; }
+}
     </style>
 </head>
 <body>
@@ -706,449 +842,446 @@
                     </tr>
                 </thead>
                 <tbody id="songList">
+<tbody id="songList">
 
-                    <!-- Track 01 -->
-                    <tr class="track-row">
-                        <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="track-info">
-                                <span class="track-name">Maje Maje tobo</span>
-                                <span class="artist-name">Rabindro_Songith</span>
-                            </div>
-                        </td>
-                        <td class="artist-cell">Yesmin Sultana Eli</td>
-                        <td>
-                            <audio class="inline-audio" controls preload="metadata">
-                                <source src=" assets/maje_maje_tobo.mp4" type="audio/mp4">
-                            </audio>
-                        </td>
-                    </tr>
+    <!-- Track 01 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Maje Maje tobo</span>
+                <span class="artist-name">Rabindro_Songith</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src=" assets/maje_maje_tobo.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-                    <!-- Track 02 -->
-                    <tr class="track-row">
-                        <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="track-info">
-                                <span class="track-name">Humnaba mere</span>
-                                <span class="artist-name">Jubin</span>
-                            </div>
-                        </td>
-                        <td class="artist-cell">Yesmin Sultana Eli</td>
-                        <td>
-                            <audio class="inline-audio" controls preload="metadata">
-                                <source src="assets/humnaba_mere.mp4" type="audio/mp4">
-                            </audio>
-                        </td>
-                    </tr>
+    <!-- Track 02 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Humnaba mere</span>
+                <span class="artist-name">Jubin</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="assets/humnaba_mere.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-                    <!-- Track 03 -->
-                    <tr class="track-row">
-                        <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="track-info">
-                                <span class="track-name">Main agar kahu</span>
-                                <span class="artist-name">Shreya Goshal</span>
-                            </div>
-                        </td>
-                        <td class="artist-cell">Yesmin Sultana Eli</td>
-                        <td>
-                            <audio class="inline-audio" controls preload="metadata">
-                                <source src="assets/main_agar_kahu.mp4" type="audio/mp4">
-                            </audio>
-                        </td>
-                    </tr>
+    <!-- Track 03 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Main agar kahu</span>
+                <span class="artist-name">Shreya Goshal</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="assets/main_agar_kahu.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-                    <!-- Track 04 -->
-                    <tr class="track-row">
-                        <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="track-info">
-                                <span class="track-name">Modhu maloti</span>
-                                <span class="artist-name">Shandhya mukharjee</span>
-                            </div>
-                        </td>
-                        <td class="artist-cell">Yesmin Sultana Eli</td>
-                        <td>
-                            <audio class="inline-audio" controls preload="metadata">
-                                <source src="assets/modhu_maloti.mp4" type="audio/mp4">
-                            </audio>
-                        </td>
-                    </tr>
-                    <!-- Track 05 -->
-                    <!--Isuues Begain From here-->
+    <!-- Track 04 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Modhu maloti</span>
+                <span class="artist-name">Shandhya mukharjee</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="assets/modhu_maloti.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-                    <!--WORK START FROM HERE-->
-                    <!--Updated version2.0-->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Dewana</span>
-            <span class="artist-name">Shreya Gushal</span>
-        </div>
-    </td>
-    <td class="artist-cell">Sheikh Marjan Satu</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Music/videos/satu1.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 05 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Dewana</span>
+                <span class="artist-name">Shreya Gushal</span>
+            </div>
+        </td>
+        <td class="artist-cell">Sheikh Marjan Satu</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Music/videos/satu1.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 06 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Bolo Sathiya</span>
-            <span class="artist-name">#wd'nK</span>
-        </div>
-    </td>
-    <td class="artist-cell">Sheikh Marjan Satu</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="satu2.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 06 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Bolo Sathiya</span>
+                <span class="artist-name">#wd'nK</span>
+            </div>
+        </td>
+        <td class="artist-cell">Sheikh Marjan Satu</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="satu2.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 07 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Prakton(ex🐍)</span>
-            <span class="Emon Chokroborthi"></span>
-        </div>
-    </td>
-    <td class="artist-cell">Shiekh Marjan Satu</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="satu3.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 07 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Prakton(ex🐍)</span>
+                <span class="artist-name">Emon Chokroborthi</span>
+            </div>
+        </td>
+        <td class="artist-cell">Shiekh Marjan Satu</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="satu3.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 08 -->
-<tr class="track-row">
-   <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Ami Je Tumar</span>
-            <span class="artist-name">Shreya Goshal</span>
-        </div>
-    </td>
-    <td class="artist-cell">Sheikh Marjan Satu</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="satu4.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 08 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Ami Je Tumar</span>
+                <span class="artist-name">Shreya Goshal</span>
+            </div>
+        </td>
+        <td class="artist-cell">Sheikh Marjan Satu</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="satu4.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 09 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Saiyaraa</span>
-            <span class="artist-name">Shreya Goshal</span>
-        </div>
-    </td>
-    <td class="artist-cell">Sheikh Marjan Satu</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="satu5.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 09 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Saiyaraa</span>
+                <span class="artist-name">Shreya Goshal</span>
+            </div>
+        </td>
+        <td class="artist-cell">Sheikh Marjan Satu</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="satu5.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 10 -->
-<tr class="track-row">
-   <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Aro Akber Cholo Fire jai</span>
-            <span class="artist-name">Rupam Islam</span>
-        </div>
-    </td>
-    <td class="artist-cell">Ashfiqur Rahman Sani</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="sani1.ogg" type="audio/ogg">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 10 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Aro Akber Cholo Fire jai</span>
+                <span class="artist-name">Rupam Islam</span>
+            </div>
+        </td>
+        <td class="artist-cell">Ashfiqur Rahman Sani</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="sani1.ogg" type="audio/ogg">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 11 -->
-<tr class="track-row">
-   <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Ei Bristy Beja Rate</span>
-            <span class="artist-name">George Lincolin D'Costa</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana ELI</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Ei_bristy _veja _rate.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
-<!--WORK START FROM HERE AGAIN-->
-<!-- Track 12 -->
-<tr class="track-row"> 
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">O Je mane na mana</span>
-            <span class="artist-name">Rabindrnath Tagor</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Eli2.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 11 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Ei Bristy Beja Rate</span>
+                <span class="artist-name">George Lincolin D'Costa</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana ELI</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Ei_bristy _veja _rate.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 13 -->
-<tr class="track-row">
-  <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Saiyaraa</span>
-            <span class="artist-name">Shreya Goshal</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="eli3.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 12 -->
+    <tr class="track-row"> 
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">O Je mane na mana</span>
+                <span class="artist-name">Rabindrnath Tagor</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Eli2.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 14 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">
-Itna Na Mujhse Tu Pyaar Badha</span>
-            <span class="artist-name"> Sunil D, Asha P</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Eli3_2.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 13 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Saiyaraa</span>
+                <span class="artist-name">Shreya Goshal</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="eli3.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 15 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Ke bashi Bazay re</span>
-            <span class="artist-name">Anila</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin SULTANA Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Eli4.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 14 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Itna Na Mujhse Tu Pyaar Badha</span>
+                <span class="artist-name">Sunil D, Asha P</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Eli3_2.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 16 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Buje Na Shea Buje Na</span>
-            <span class="artist-name">Arjith Sing</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Buje_na.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 15 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Ke bashi Bazay re</span>
+                <span class="artist-name">Anila</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin SULTANA Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Eli4.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 17 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">Khabi to Pass mere aoo</span>
-            <span class="artist-name">Atif Aslam</span>
-        </div>
-    </td>
-    <td class="artist-cell">Yesmin Sultana Eli</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="Khabi_to.mp4" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 16 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Buje Na Shea Buje Na</span>
+                <span class="artist-name">Arjith Sing</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Buje_na.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 18 -->
-<tr class="track-row">
-<td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">TITLE_HERE</span>
-            <span class="artist-name">ARTIST_HERE</span>
-        </div>
-    </td>
-    <td class="artist-cell">SINGER_HERE</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="AUDIO_SRC_HERE" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 17 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">Khabi to Pass mere aoo</span>
+                <span class="artist-name">Atif Aslam</span>
+            </div>
+        </td>
+        <td class="artist-cell">Yesmin Sultana Eli</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="Khabi_to.mp4" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-<!-- Track 19 -->
-<tr class="track-row">
-    <td>
-                            <div class="equalizer">
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                                <div class="eq-bar"></div>
-                            </div>
-                        </td>
-    <td>
-        <div class="track-info">
-            <span class="track-name">TITLE_HERE</span>
-            <span class="artist-name">ARTIST_HERE</span>
-        </div>
-    </td>
-    <td class="artist-cell">SINGER_HERE</td>
-    <td>
-        <audio class="inline-audio" controls preload="metadata">
-            <source src="AUDIO_SRC_HERE" type="audio/mp4">
-        </audio>
-    </td>
-</tr>
+    <!-- Track 18 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">TITLE_HERE</span>
+                <span class="artist-name">ARTIST_HERE</span>
+            </div>
+        </td>
+        <td class="artist-cell">SINGER_HERE</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="AUDIO_SRC_HERE" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
 
-                </tbody>
+    <!-- Track 19 -->
+    <tr class="track-row">
+        <td>
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+        </td>
+        <td>
+            <div class="track-info">
+                <span class="track-name">TITLE_HERE</span>
+                <span class="artist-name">ARTIST_HERE</span>
+            </div>
+        </td>
+        <td class="artist-cell">SINGER_HERE</td>
+        <td>
+            <audio class="inline-audio" controls preload="metadata">
+                <source src="AUDIO_SRC_HERE" type="audio/mp4">
+            </audio>
+        </td>
+    </tr>
+
+</tbody>
             </table>
 
             <div id="no-results">No songs or artists found matching your search term.</div>
@@ -1393,6 +1526,102 @@ document.addEventListener('DOMContentLoaded', function () {
     if (prevBtn) {
         prevBtn.addEventListener('click', playPreviousTrack);
     }
+});
+        document.addEventListener('DOMContentLoaded', function () {
+    const allAudios = document.querySelectorAll('audio.inline-audio');
+
+    allAudios.forEach((audio, index) => {
+        
+        // 1. Pause all other tracks when a new one starts playing
+        audio.addEventListener('play', function () {
+            allAudios.forEach((otherAudio) => {
+                if (otherAudio !== audio) {
+                    otherAudio.pause();
+                    otherAudio.currentTime = 0; // Reset other tracks to start
+                }
+            });
+
+            // Highlight the active playing card
+            document.querySelectorAll('.track-row').forEach(row => row.classList.remove('playing'));
+            const parentRow = audio.closest('.track-row');
+            if (parentRow) parentRow.classList.add('playing');
+        });
+
+        // 2. Automatically play the next track when the current song ends
+        audio.addEventListener('ended', function () {
+            const nextIndex = index + 1;
+            
+            if (nextIndex < allAudios.length) {
+                allAudios[nextIndex].play();
+            } else {
+                // Loop back to the first song if the playlist finishes
+                allAudios[0].play();
+            }
+        });
+    });
+});
+        document.addEventListener('DOMContentLoaded', function () {
+    const trackRows = document.querySelectorAll('.track-row');
+    const allAudios = document.querySelectorAll('audio.inline-audio');
+
+    trackRows.forEach((row) => {
+        const audio = row.querySelector('audio');
+
+        // 1. Play or pause track when clicking anywhere on the row
+        row.addEventListener('click', function (e) {
+            // Prevent event collision when clicking directly on native audio controls
+            if (e.target.tagName === 'AUDIO' || e.target.closest('audio')) {
+                return;
+            }
+
+            if (audio) {
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        });
+
+        if (audio) {
+            // 2. Handle audio play event
+            audio.addEventListener('play', function () {
+                // Pause all other playing audio elements
+                allAudios.forEach((otherAudio) => {
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                        otherAudio.currentTime = 0;
+                    }
+                });
+
+                // Remove highlight from all rows
+                trackRows.forEach((r) => r.classList.remove('is-playing'));
+
+                // Add active highlight class to the current row
+                row.classList.add('is-playing');
+            });
+
+            // 3. Handle audio pause event
+            audio.addEventListener('pause', function () {
+                row.classList.remove('is-playing');
+            });
+
+            // 4. Play next track automatically when current song ends
+            audio.addEventListener('ended', function () {
+                row.classList.remove('is-playing');
+
+                const currentRow = audio.closest('.track-row');
+                const nextRow = currentRow ? currentRow.nextElementSibling : null;
+
+                if (nextRow) {
+                    const nextAudio = nextRow.querySelector('audio');
+                    if (nextAudio) {
+                        nextAudio.play();
+                    }
+                }
+            });
+        }
+    });
 });
     </script>
 
