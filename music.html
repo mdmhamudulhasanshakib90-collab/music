@@ -914,6 +914,131 @@ audio.inline-audio {
     0% { height: 15%; }
     100% { height: 100%; }
 }
+        /* Container & Table Setup */
+#songList {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Horizontal Track Row Layout */
+.track-row {
+    cursor: pointer;
+    background: #18181b; /* Dark sleek surface */
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.track-row td {
+    padding: 12px 16px;
+    vertical-align: middle;
+}
+
+/* Rounded corners for the row */
+.track-row td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.track-row td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Row Hover Effect */
+.track-row:hover {
+    background: #27272a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Equalizer Base Setup */
+.equalizer {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 18px;
+    width: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.eq-bar {
+    width: 3px;
+    background: linear-gradient(180deg, #a855f7 0%, #ec4899 100%); /* Neon Purple to Pink */
+    border-radius: 2px;
+    height: 20%;
+}
+
+/* Text & Cell Styling */
+.track-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f4f4f5;
+    display: block;
+    margin-bottom: 2px;
+    transition: color 0.2s ease;
+}
+
+.artist-name {
+    font-size: 0.85rem;
+    color: #a1a1aa;
+}
+
+.artist-cell {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+/* Native Audio Player Styling */
+.inline-audio {
+    height: 38px;
+    width: 100%;
+    max-width: 280px;
+    outline: none;
+    border-radius: 30px;
+    filter: invert(0.9) hue-rotate(190deg); /* Modern dark themed controls */
+}
+
+/* ---------------------------------------------------------
+   Active Playing Track Styling (Neon Glow & Gradient)
+   --------------------------------------------------------- */
+.track-row.is-playing {
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%) !important;
+    border-left: 4px solid #a855f7;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+}
+
+.track-row.is-playing .track-name {
+    color: #c084fc !important; /* Bright Neon Accent */
+}
+
+.track-row.is-playing .equalizer {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Equalizer Bar Animations */
+.track-row.is-playing .eq-bar:nth-child(1) {
+    animation: eqBounce 0.6s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.track-row.is-playing .eq-bar:nth-child(2) {
+    animation: eqBounce 0.4s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
+}
+
+.track-row.is-playing .eq-bar:nth-child(3) {
+    animation: eqBounce 0.8s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
+}
+
+@keyframes eqBounce {
+    0% { height: 15%; }
+    100% { height: 100%; }
+}
     </style>
 </head>
 <body>
@@ -1766,6 +1891,69 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // 4. Play next track automatically when current song ends
+            audio.addEventListener('ended', function () {
+                row.classList.remove('is-playing');
+
+                const currentRow = audio.closest('.track-row');
+                const nextRow = currentRow ? currentRow.nextElementSibling : null;
+
+                if (nextRow) {
+                    const nextAudio = nextRow.querySelector('audio');
+                    if (nextAudio) {
+                        nextAudio.play();
+                    }
+                }
+            });
+        }
+    });
+});
+        document.addEventListener('DOMContentLoaded', function () {
+    const trackRows = document.querySelectorAll('.track-row');
+    const allAudios = document.querySelectorAll('audio.inline-audio');
+
+    trackRows.forEach((row) => {
+        const audio = row.querySelector('audio');
+
+        // Play/Pause audio when clicking anywhere on the horizontal row
+        row.addEventListener('click', function (e) {
+            // Prevent event collision when clicking native player controls directly
+            if (e.target.tagName === 'AUDIO' || e.target.closest('audio')) {
+                return;
+            }
+
+            if (audio) {
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        });
+
+        if (audio) {
+            // Handle Play State
+            audio.addEventListener('play', function () {
+                // Pause all other playing audio tracks
+                allAudios.forEach((otherAudio) => {
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                        otherAudio.currentTime = 0;
+                    }
+                });
+
+                // Clear highlights from all rows
+                trackRows.forEach((r) => r.classList.remove('is-playing'));
+
+                // Highlight active row
+                row.classList.add('is-playing');
+            });
+
+            // Handle Pause State
+            audio.addEventListener('pause', function () {
+                row.classList.remove('is-playing');
+            });
+
+            // Handle Track Ended (Auto-Play Next)
             audio.addEventListener('ended', function () {
                 row.classList.remove('is-playing');
 
