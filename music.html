@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="bn" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friend's Voice</title>
+    <title>Friend's Voice - Web Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- CSS and JS File Connections -->
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
@@ -18,15 +18,9 @@
         <aside class="sidebar">
             <div class="brand-logo">
                 <svg class="brand-icon-svg" viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    <path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                 </svg>
                 <span>Friend's Voice</span>
-            </div>
-
-            <!-- Theme Switcher -->
-            <div class="theme-toggle-btn" onclick="toggleTheme()">
-                <span id="themeLabel">☀️ Light Mode</span>
-                <span id="themeIcon">🔄 Switch</span>
             </div>
 
             <ul class="nav-menu">
@@ -37,392 +31,336 @@
                     <span class="nav-icon">🔍</span> Search
                 </li>
                 <li class="nav-item" onclick="switchTab(this)">
-                    <span class="nav-icon">🎵</span> Playlists
-                </li>
-                <li class="nav-item" onclick="switchTab(this)">
-                    <span class="nav-icon">❤️</span> Liked Songs
-                </li>
-                <li class="nav-item" onclick="openModal()">
-                    <span class="nav-icon">ℹ️</span> About Us
+                    <span class="nav-icon">📚</span> Your Library
                 </li>
             </ul>
 
             <div class="library-box">
                 <h4>Friend's Voice Vault</h4>
                 <p>Listen to exclusive audio tracks uploaded directly by artists in high quality.</p>
+                <button class="btn-secondary" onclick="openModal()">About Us</button>
             </div>
         </aside>
 
-        <!-- Main View Header & Tracks -->
+        <!-- Main Content Area -->
         <main class="main-view">
             
-            <!-- Top Search Input -->
+            <!-- Top Search & Bar -->
             <div class="top-bar">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" onkeyup="filterSongs()" placeholder="Search by song or artist name...">
+                    <input type="text" id="searchInput" onkeyup="filterSongs()" placeholder="What do you want to listen to?">
                 </div>
             </div>
 
-            <!-- Main Title Header -->
+            <!-- Banner Section -->
             <div class="playlist-banner">
                 <div class="album-art">
                     <svg viewBox="0 0 24 24">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                        <path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                     </svg>
                 </div>
                 <div class="banner-info">
                     <span class="badge">Verified Public Playlist</span>
                     <h1 class="banner-title">Friend's Voice</h1>
                     <div class="banner-meta">
-                        <strong>Official Music Collection</strong> • 19 Tracks
+                        <strong>Official Music Collection</strong> • <span id="trackCount">17 Tracks</span>
                     </div>
                 </div>
             </div>
 
+            <!-- Main Play Action Button -->
             <div class="action-bar">
-                <div class="play-main-btn" title="Play First Track" onclick="playFirstTrack()">▶</div>
+                <button class="play-main-btn" id="mainPlayBtn" title="Play First Track" onclick="playFirstTrack()">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Song List Header -->
+            <div class="track-header-labels">
+                <span># TITLE</span>
+                <span>COVER ARTIST</span>
+                <span>AUDIO</span>
             </div>
 
             <!-- Song List Container -->
             <div id="songList">
 
                 <!-- Track 01 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">01</span>
-                            <div class="track-info">
-                                <span class="track-name">Maje Maje tobo</span>
-                                <span class="artist-name">Rabindro_Songith</span>
-                            </div>
+                <div class="track-row" data-src="assets/maje_maje_tobo.mp4" data-title="Maje Maje tobo" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">1</span>
+                        <div class="track-info">
+                            <span class="track-name">Maje Maje tobo</span>
+                            <span class="artist-name">Rabindro_Songith</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="assets/maje_maje_tobo.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 02 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">02</span>
-                            <div class="track-info">
-                                <span class="track-name">Humnaba mere</span>
-                                <span class="artist-name">Jubin</span>
-                            </div>
+                <div class="track-row" data-src="humnaba_mere.mp4" data-title="Humnaba mere" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">2</span>
+                        <div class="track-info">
+                            <span class="track-name">Humnaba mere</span>
+                            <span class="artist-name">Jubin</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="humnaba_mere.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 03 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">03</span>
-                            <div class="track-info">
-                                <span class="track-name">Main agar kahu</span>
-                                <span class="artist-name">Shreya Goshal</span>
-                            </div>
+                <div class="track-row" data-src="assets/main_agar_kahu.mp4" data-title="Main agar kahu" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">3</span>
+                        <div class="track-info">
+                            <span class="track-name">Main agar kahu</span>
+                            <span class="artist-name">Shreya Ghoshal</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="assets/main_agar_kahu.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 04 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">04</span>
-                            <div class="track-info">
-                                <span class="track-name">Modhu maloti</span>
-                                <span class="artist-name">Shandhya mukharjee</span>
-                            </div>
+                <div class="track-row" data-src="assets/modhu_maloti.mp4" data-title="Modhu maloti" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">4</span>
+                        <div class="track-info">
+                            <span class="track-name">Modhu maloti</span>
+                            <span class="artist-name">Shandhya Mukherjee</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="assets/modhu_maloti.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 05 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">05</span>
-                            <div class="track-info">
-                                <span class="track-name">Dewana</span>
-                                <span class="artist-name">Shreya Gushal</span>
-                            </div>
+                <div class="track-row" data-src="Music/videos/satu1.mp4" data-title="Dewana" data-artist="Sheikh Marjan Satu">
+                    <div class="track-left">
+                        <span class="track-number">5</span>
+                        <div class="track-info">
+                            <span class="track-name">Dewana</span>
+                            <span class="artist-name">Shreya Ghoshal</span>
                         </div>
-                        <div class="artist-cell">"Sheikh Marjan Satu"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Music/videos/satu1.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Sheikh Marjan Satu</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 06 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">06</span>
-                            <div class="track-info">
-                                <span class="track-name">Bolo Sathiya</span>
-                                <span class="artist-name">#wd'nK</span>
-                            </div>
+                <div class="track-row" data-src="satu2.mp4" data-title="Bolo Sathiya" data-artist="Sheikh Marjan Satu">
+                    <div class="track-left">
+                        <span class="track-number">6</span>
+                        <div class="track-info">
+                            <span class="track-name">Bolo Sathiya</span>
+                            <span class="artist-name">#wd'nK</span>
                         </div>
-                        <div class="artist-cell">"Sheikh Marjan Satu"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="satu2.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Sheikh Marjan Satu</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 07 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">07</span>
-                            <div class="track-info">
-                                <span class="track-name">Prakton(ex🐍)</span>
-                                <span class="artist-name">Emon Chokroborthi</span>
-                            </div>
+                <div class="track-row" data-src="satu3.mp4" data-title="Prakton (ex🐍)" data-artist="Sheikh Marjan Satu">
+                    <div class="track-left">
+                        <span class="track-number">7</span>
+                        <div class="track-info">
+                            <span class="track-name">Prakton(ex🐍)</span>
+                            <span class="artist-name">Emon Chokroborthi</span>
                         </div>
-                        <div class="artist-cell">"Shiekh Marjan Satu"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="satu3.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Sheikh Marjan Satu</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 08 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">08</span>
-                            <div class="track-info">
-                                <span class="track-name">Ami Je Tumar</span>
-                                <span class="artist-name">Shreya Goshal</span>
-                            </div>
+                <div class="track-row" data-src="satu4.mp4" data-title="Ami Je Tumar" data-artist="Sheikh Marjan Satu">
+                    <div class="track-left">
+                        <span class="track-number">8</span>
+                        <div class="track-info">
+                            <span class="track-name">Ami Je Tumar</span>
+                            <span class="artist-name">Shreya Ghoshal</span>
                         </div>
-                        <div class="artist-cell">"Sheikh Marjan Satu"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="satu4.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Sheikh Marjan Satu</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 09 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">09</span>
-                            <div class="track-info">
-                                <span class="track-name">Saiyaraa</span>
-                                <span class="artist-name">Shreya Goshal</span>
-                            </div>
+                <div class="track-row" data-src="satu5.mp4" data-title="Saiyaraa" data-artist="Sheikh Marjan Satu">
+                    <div class="track-left">
+                        <span class="track-number">9</span>
+                        <div class="track-info">
+                            <span class="track-name">Saiyaraa</span>
+                            <span class="artist-name">Shreya Ghoshal</span>
                         </div>
-                        <div class="artist-cell">"Sheikh Marjan Satu"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="satu5.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Sheikh Marjan Satu</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 10 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">10</span>
-                            <div class="track-info">
-                                <span class="track-name">Aro Akber Cholo Fire jai</span>
-                                <span class="artist-name">Rupam Islam</span>
-                            </div>
+                <div class="track-row" data-src="sani1.ogg" data-title="Aro Akber Cholo Fire jai" data-artist="Ashfiqur Rahman Sani">
+                    <div class="track-left">
+                        <span class="track-number">10</span>
+                        <div class="track-info">
+                            <span class="track-name">Aro Akber Cholo Fire jai</span>
+                            <span class="artist-name">Rupam Islam</span>
                         </div>
-                        <div class="artist-cell">"Ashfiqur Rahman Sani"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="sani1.ogg" type="audio/ogg">
-                        </audio>
+                    <div class="artist-cell">Ashfiqur Rahman Sani</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 11 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">11</span>
-                            <div class="track-info">
-                                <span class="track-name">Ei Bristy Beja Rate</span>
-                                <span class="artist-name">George Lincolin D'Costa</span>
-                            </div>
+                <div class="track-row" data-src="Ei_bristy _veja _rate.mp4" data-title="Ei Bristy Beja Rate" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">11</span>
+                        <div class="track-info">
+                            <span class="track-name">Ei Bristy Beja Rate</span>
+                            <span class="artist-name">George Lincolin D'Costa</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana ELI"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Ei_bristy _veja _rate.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 12 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">12</span>
-                            <div class="track-info">
-                                <span class="track-name">O Je mane na mana</span>
-                                <span class="artist-name">Rabindrnath Tagor</span>
-                            </div>
+                <div class="track-row" data-src="Eli2.mp4" data-title="O Je mane na mana" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">12</span>
+                        <div class="track-info">
+                            <span class="track-name">O Je mane na mana</span>
+                            <span class="artist-name">Rabindranath Tagore</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Eli2.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 13 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">13</span>
-                            <div class="track-info">
-                                <span class="track-name">Saiyaraa</span>
-                                <span class="artist-name">Shreya Goshal</span>
-                            </div>
+                <div class="track-row" data-src="eli3.mp4" data-title="Saiyaraa" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">13</span>
+                        <div class="track-info">
+                            <span class="track-name">Saiyaraa</span>
+                            <span class="artist-name">Shreya Ghoshal</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="eli3.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 14 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">14</span>
-                            <div class="track-info">
-                                <span class="track-name">Itna Na Mujhse Tu Pyaar Badha</span>
-                                <span class="artist-name">Sunil D, Asha P</span>
-                            </div>
+                <div class="track-row" data-src="Eli3_2.mp4" data-title="Itna Na Mujhse Tu Pyaar Badha" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">14</span>
+                        <div class="track-info">
+                            <span class="track-name">Itna Na Mujhse Tu Pyaar Badha</span>
+                            <span class="artist-name">Sunil D, Asha P</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Eli3_2.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 15 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">15</span>
-                            <div class="track-info">
-                                <span class="track-name">Ke bashi Bazay re</span>
-                                <span class="artist-name">Anila</span>
-                            </div>
+                <div class="track-row" data-src="Eli4.mp4" data-title="Ke bashi Bazay re" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">15</span>
+                        <div class="track-info">
+                            <span class="track-name">Ke bashi Bazay re</span>
+                            <span class="artist-name">Anila</span>
                         </div>
-                        <div class="artist-cell">"Yesmin SULTANA Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Eli4.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 16 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">16</span>
-                            <div class="track-info">
-                                <span class="track-name">Buje Na Shea Buje Na</span>
-                                <span class="artist-name">Arjith Sing</span>
-                            </div>
+                <div class="track-row" data-src="Buje_na.mp4" data-title="Buje Na Shea Buje Na" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">16</span>
+                        <div class="track-info">
+                            <span class="track-name">Buje Na Shea Buje Na</span>
+                            <span class="artist-name">Arijit Singh</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Buje_na.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
                 <!-- Track 17 -->
-                <div class="track-row">
-                    <div class="track-header">
-                        <div class="track-left">
-                            <span class="track-number">17</span>
-                            <div class="track-info">
-                                <span class="track-name">Khabi to Pass mere aoo</span>
-                                <span class="artist-name">Atif Aslam</span>
-                            </div>
+                <div class="track-row" data-src="Khabi_to.mp4" data-title="Khabi to Pass mere aoo" data-artist="Yesmin Sultana Eli">
+                    <div class="track-left">
+                        <span class="track-number">17</span>
+                        <div class="track-info">
+                            <span class="track-name">Khabi to Pass mere aoo</span>
+                            <span class="artist-name">Atif Aslam</span>
                         </div>
-                        <div class="artist-cell">"Yesmin Sultana Eli"</div>
                     </div>
-                    <div class="audio-container">
-                        <audio class="inline-audio" controls preload="metadata">
-                            <source src="Khabi_to.mp4" type="audio/mp4">
-                        </audio>
+                    <div class="artist-cell">Yesmin Sultana Eli</div>
+                    <div class="action-cell">
+                        <button class="row-play-btn">▶</button>
                     </div>
                 </div>
 
             </div>
 
-            <div id="no-results" style="display: none;">No songs or artists found matching your search term.</div>
+            <div id="no-results" class="no-results" style="display: none;">
+                No songs or artists found matching your search term.
+            </div>
 
         </main>
     </div>
 
-    <!-- Bottom Audio Control Bar -->
+    <!-- Hidden Global Audio Tag -->
+    <audio id="globalAudio" preload="metadata"></audio>
+
+    <!-- Spotify-style Fixed Bottom Audio Player -->
     <footer class="bottom-player">
         <div class="currently-playing">
             <div class="now-art">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                 </svg>
             </div>
             <div class="now-info">
@@ -438,12 +376,23 @@
                         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
                     </svg>
                 </button>
+
+                <button class="control-btn play-pause-toggle" id="playPauseBtn" title="Play/Pause">
+                    <svg id="playIcon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="pauseIcon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="display: none;">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                </button>
+
                 <button class="control-btn" id="nextBtn" title="Next Song">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                         <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
                     </svg>
                 </button>
             </div>
+
             <div class="player-progress-container">
                 <span class="time-text" id="currentTime">0:00</span>
                 <input type="range" class="seek-bar" id="seekBar" value="0" min="0" max="100">
@@ -452,16 +401,17 @@
         </div>
 
         <div class="volume-controls">
-            <span>🎧 Friend's Voice Web Engine</span>
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-bar" id="volumeBar" value="100" min="0" max="100">
         </div>
     </footer>
 
-    <!-- About Us Modal -->
+    <!-- About Modal -->
     <div class="modal" id="aboutModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">✕</button>
-            <h3 style="margin-bottom: 12px; color: var(--theme-accent);">About Friend's Voice</h3>
-            <p style="font-size: 0.9rem; color: var(--theme-gray-text); line-height: 1.6;">
+            <h3>About Friend's Voice</h3>
+            <p>
                 Welcome to Friend's Voice, an aesthetic, light-weight audio platform designed to stream cover songs and personal recordings directly to your browser with crystal clear quality.
             </p>
         </div>
