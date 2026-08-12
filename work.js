@@ -1,224 +1,177 @@
-/* ==========================================
-   SPOTIFY-STYLE AUDIO PLAYER ENGINE
-   ========================================== */
+// App State Variables
+let currentTrackIndex = -1;
+let isPlaying = false;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. DOM Elements Selection
-    const trackRows = document.querySelectorAll('.track-row');
-    const audioElements = document.querySelectorAll('.inline-audio');
-    const searchInput = document.getElementById('searchInput');
-    const noResults = document.getElementById('no-results');
-    
-    const nowPlayingTitle = document.getElementById('nowPlayingTitle');
-    const nowPlayingArtist = document.getElementById('nowPlayingArtist');
-    const currentTimeEl = document.getElementById('currentTime');
-    const durationTimeEl = document.getElementById('durationTime');
-    const seekBar = document.getElementById('seekBar');
-    const themeLabel = document.getElementById('themeLabel');
-    
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const aboutModal = document.getElementById('aboutModal');
+// DOM Elements
+const audio = document.getElementById('globalAudio');
+const trackRows = Array.from(document.querySelectorAll('.track-row'));
+const playPauseBtn = document.getElementById('playPauseBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const seekBar = document.getElementById('seekBar');
+const volumeBar = document.getElementById('volumeBar');
+const currentTimeEl = document.getElementById('currentTime');
+const durationTimeEl = document.getElementById('durationTime');
+const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+const nowPlayingArtist = document.getElementById('nowPlayingArtist');
 
-    // Player State Variables
-    let currentAudio = null;
-    let currentTrackIndex = -1;
-
-    /* ==========================================
-       2. HELPER FUNCTIONS
-       ========================================== */
-    // Time Formatter (mm:ss)
-    function formatTime(seconds) {
-        if (isNaN(seconds) || seconds < 0) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
-
-    // Reset active UI states & pause playback
-    function clearActiveStates() {
-        audioElements.forEach(audio => audio.pause());
-        trackRows.forEach(row => row.classList.remove('active', 'playing'));
-    }
-
-    /* ==========================================
-       3. CORE PLAYER CONTROLS
-       ========================================== */
-    // Play track by index
-    window.playTrack = function(index) {
-        if (index < 0 || index >= trackRows.length) return;
-
-        const row = trackRows[index];
-        const audio = row.querySelector('audio');
-
-        if (!audio) return;
-
-        // Toggle pause/play if clicking the currently playing track
-        if (currentAudio === audio && !audio.paused) {
-            audio.pause();
-            return;
-        }
-
-        clearActiveStates();
-
-        currentAudio = audio;
-        currentTrackIndex = index;
-
-        // Active State Highlight
-        row.classList.add('active', 'playing');
-
-        // Extract metadata from row and update bottom player
-        const title = row.querySelector('.track-name')?.textContent || "Unknown Title";
-        const singer = row.querySelector('.artist-cell, .artist-name')?.textContent.replace(/"/g, '') || "Unknown Singer";
-
-        if (nowPlayingTitle) nowPlayingTitle.textContent = title;
-        if (nowPlayingArtist) nowPlayingArtist.textContent = singer;
-
-        audio.play().catch(err => console.error("Playback error:", err));
-    };
-
-    // Play First Track
-    window.playFirstTrack = function() {
-        if (trackRows.length > 0) {
-            playTrack(0);
-        }
-    };
-
-    /* ==========================================
-       4. AUDIO EVENT LISTENERS & PROGRESS SYNC
-       ========================================== */
+// Initialize Player Event Listeners
+function initPlayer() {
     trackRows.forEach((row, index) => {
-        const audio = row.querySelector('audio');
-        if (!audio) return;
-
-        // Click track row to play
-        row.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'AUDIO' && !e.target.closest('audio')) {
-                playTrack(index);
-            }
-        });
-
-        // Time and seekbar updating
-        audio.addEventListener('timeupdate', () => {
-            if (currentAudio === audio) {
-                if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
-                if (durationTimeEl && !isNaN(audio.duration)) {
-                    durationTimeEl.textContent = formatTime(audio.duration);
-                }
-                if (seekBar && audio.duration) {
-                    seekBar.value = (audio.currentTime / audio.duration) * 100;
-                }
-            }
-        });
-
-        // Track state syncing on play/pause
-        audio.addEventListener('play', () => {
-            if (currentAudio !== audio) {
-                clearActiveStates();
-                currentAudio = audio;
-                currentTrackIndex = index;
-            }
-            row.classList.add('active', 'playing');
-        });
-
-        audio.addEventListener('pause', () => {
-            row.classList.remove('active', 'playing');
-        });
-
-        // Spotify Continuous Autoplay
-        audio.addEventListener('ended', () => {
-            row.classList.remove('active', 'playing');
-            if (currentTrackIndex + 1 < trackRows.length) {
-                playTrack(currentTrackIndex + 1);
-            }
-        });
+        row.addEventListener('click', () => playTrack(index));
     });
 
-    /* ==========================================
-       5. SEEKBAR & MEDIA CONTROLS
-       ========================================== */
-    if (seekBar) {
-        seekBar.addEventListener('input', () => {
-            if (currentAudio && currentAudio.duration) {
-                currentAudio.currentTime = (seekBar.value / 100) * currentAudio.duration;
-            }
-        });
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    prevBtn.addEventListener('click', playPreviousTrack);
+    nextBtn.addEventListener('click', playNextTrack);
+
+    audio.addEventListener('timeupdate', updateSeekBar);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', playNextTrack);
+
+    seekBar.addEventListener('input', seekAudio);
+    volumeBar.addEventListener('input', adjustVolume);
+}
+
+// Play Specific Track by Index
+function playTrack(index) {
+    if (index < 0 || index >= trackRows.length) return;
+
+    currentTrackIndex = index;
+    const selectedRow = trackRows[currentTrackIndex];
+    const src = selectedRow.getAttribute('data-src');
+    const title = selectedRow.getAttribute('data-title');
+    const artist = selectedRow.getAttribute('data-artist');
+
+    // UI Updates
+    trackRows.forEach(row => row.classList.remove('active-track'));
+    selectedRow.classList.add('active-track');
+
+    nowPlayingTitle.textContent = title;
+    nowPlayingArtist.textContent = artist;
+
+    // Audio Playback
+    audio.src = src;
+    audio.play();
+    isPlaying = true;
+    updateControlIcons();
+}
+
+// Toggle Play/Pause State
+function togglePlayPause() {
+    if (currentTrackIndex === -1) {
+        playTrack(0);
+        return;
     }
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (currentTrackIndex > 0) {
-                playTrack(currentTrackIndex - 1);
-            }
-        });
+    if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+    } else {
+        audio.play();
+        isPlaying = true;
     }
+    updateControlIcons();
+}
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            if (currentTrackIndex < trackRows.length - 1) {
-                playTrack(currentTrackIndex + 1);
-            }
-        });
+function updateControlIcons() {
+    if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+    } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
     }
+}
 
-    /* ==========================================
-       6. THEME, SEARCH, TABS & MODALS
-       ========================================== */
-    // Light / Dark Theme Switcher
-    window.toggleTheme = function() {
-        const root = document.documentElement;
-        const currentTheme = root.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+function playNextTrack() {
+    if (trackRows.length === 0) return;
+    let nextIndex = currentTrackIndex + 1;
+    if (nextIndex >= trackRows.length) nextIndex = 0;
+    playTrack(nextIndex);
+}
 
-        root.setAttribute('data-theme', newTheme);
-        if (themeLabel) {
-            themeLabel.textContent = newTheme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode';
+function playPreviousTrack() {
+    if (trackRows.length === 0) return;
+    let prevIndex = currentTrackIndex - 1;
+    if (prevIndex < 0) prevIndex = trackRows.length - 1;
+    playTrack(prevIndex);
+}
+
+function playFirstTrack() {
+    playTrack(0);
+}
+
+// Progress Bar & Duration Formatters
+function updateSeekBar() {
+    if (!isNaN(audio.duration)) {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        seekBar.value = progress;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+    }
+}
+
+function updateDuration() {
+    durationTimeEl.textContent = formatTime(audio.duration);
+}
+
+function seekAudio() {
+    if (!isNaN(audio.duration)) {
+        const seekTime = (seekBar.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+    }
+}
+
+function adjustVolume() {
+    audio.volume = volumeBar.value / 100;
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Live Search Logic
+function filterSongs() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    let visibleCount = 0;
+
+    trackRows.forEach(row => {
+        const title = row.getAttribute('data-title').toLowerCase();
+        const artist = row.getAttribute('data-artist').toLowerCase();
+
+        if (title.includes(query) || artist.includes(query)) {
+            row.style.display = 'grid';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
         }
-    };
+    });
 
-    // Live Instant Search Filter
-    window.filterSongs = function() {
-        if (!searchInput) return;
-        const filter = searchInput.value.toLowerCase().trim();
-        let hasMatch = false;
+    const noResults = document.getElementById('no-results');
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
 
-        trackRows.forEach(row => {
-            const title = row.querySelector('.track-name')?.textContent.toLowerCase() || '';
-            const artist = row.querySelector('.artist-cell, .artist-name')?.textContent.toLowerCase() || '';
+// Interface Helper Functions
+function focusSearch() {
+    document.getElementById('searchInput').focus();
+}
 
-            if (title.includes(filter) || artist.includes(filter)) {
-                row.style.display = "flex";
-                hasMatch = true;
-            } else {
-                row.style.display = "none";
-            }
-        });
+function switchTab(element) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+}
 
-        if (noResults) {
-            noResults.style.display = hasMatch ? "none" : "block";
-        }
-    };
+function openModal() {
+    document.getElementById('aboutModal').style.display = 'flex';
+}
 
-    window.focusSearch = function() {
-        if (searchInput) searchInput.focus();
-    };
+function closeModal() {
+    document.getElementById('aboutModal').style.display = 'none';
+}
 
-    window.switchTab = function(element) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
-    };
-
-    window.openModal = function() {
-        if (aboutModal) aboutModal.style.display = 'flex';
-    };
-
-    window.closeModal = function() {
-        if (aboutModal) aboutModal.style.display = 'none';
-    };
-
-    window.onclick = function(event) {
-        if (event.target === aboutModal) {
-            closeModal();
-        }
-    };
-});
+// Boot System
+document.addEventListener('DOMContentLoaded', initPlayer);
