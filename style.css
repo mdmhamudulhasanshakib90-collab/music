@@ -363,4 +363,173 @@ body {
     border: none;
     color: #ffffff;
     cursor: pointer;
+} 
+/* ==========================================
+   MOBILE & RESPONSIVE DESIGN (Phone View)
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Main Layout adjustment */
+    .app-container {
+        flex-direction: column;
+        height: calc(100vh - 80px);
+        padding: 4px;
+        gap: 4px;
+    }
+
+    /* Sidebar Navigation for Mobile */
+    .sidebar {
+        width: 100%;
+        padding: 12px;
+        gap: 12px;
+        border-radius: 6px;
+    }
+
+    .brand-logo {
+        font-size: 1rem;
+    }
+
+    .nav-menu {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 8px;
+    }
+
+    .nav-item {
+        font-size: 0.85rem;
+        gap: 6px;
+    }
+
+    /* Hide extra vault box on mobile to save vertical space */
+    .library-box {
+        display: none;
+    }
+
+    /* Main View Area */
+    .main-view {
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    /* Search Box adjustment */
+    .search-box {
+        width: 100%;
+        padding: 6px 12px;
+    }
+
+    /* Banner Section Adjustment */
+    .playlist-banner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .album-art {
+        width: 120px;
+        height: 120px;
+    }
+
+    .album-art svg {
+        width: 50px;
+        height: 50px;
+    }
+
+    .banner-title {
+        font-size: 2rem;
+    }
+
+    .banner-meta {
+        font-size: 0.85rem;
+    }
+
+    /* Track List Table Header & Rows */
+    .track-header-labels {
+        grid-template-columns: 1fr 40px; /* Hide cover artist text header on small mobile */
+        font-size: 0.75rem;
+    }
+
+    .track-header-labels span:nth-child(2) {
+        display: none;
+    }
+
+    .track-row {
+        grid-template-columns: 1fr 40px;
+        padding: 10px 8px;
+    }
+
+    .artist-cell {
+        display: none; /* Mobile view-তে জায়গা বাঁচাতে Cover Artist সরিয়ে গান ও অরিজিনাল সিঙ্গার রাখা হয়েছে */
+    }
+
+    .track-left {
+        gap: 10px;
+        overflow: hidden;
+    }
+
+    .track-name {
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .artist-name {
+        font-size: 0.75rem;
+    }
+
+    /* Bottom Player Adjustment for Phone */
+    .bottom-player {
+        height: 80px;
+        padding: 0 10px;
+        gap: 8px;
+    }
+
+    .currently-playing {
+        width: 45%;
+    }
+
+    .now-art {
+        width: 42px;
+        height: 42px;
+    }
+
+    .now-info h5 {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    .now-info p {
+        font-size: 0.7rem;
+    }
+
+    .player-controls {
+        width: 50%;
+    }
+
+    .control-buttons {
+        gap: 10px;
+    }
+
+    .control-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .play-pause-toggle {
+        padding: 6px;
+    }
+
+    .time-text {
+        font-size: 0.65rem;
+    }
+
+    /* Hide Volume Bar on Mobile to make player spacious */
+    .volume-controls {
+        display: none;
+    }
 }
+
