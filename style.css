@@ -1,4 +1,9 @@
- /* ==========================================
+html, body {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    user-select: none; /* ওয়েবসাইট টেক্সট জুম/সিলেক্ট হওয়া বন্ধ করবে */
+    -webkit-user-select: none;
+}/* ==========================================
    1. GLOBAL VARIABLES & RESET
    ========================================== */
 *, *::before, *::after {
