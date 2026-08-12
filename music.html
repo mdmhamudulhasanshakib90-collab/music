@@ -755,6 +755,98 @@ audio.inline-audio {
     0% { height: 20%; }
     100% { height: 100%; }
 }
+        /* ==========================================================
+   Professional Music Player Styling
+   ========================================================== */
+
+/* 1. Track Row Base Styling */
+.track-row {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+/* Hover Effect for Non-Active Rows */
+.track-row:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+/* 2. Equalizer Base Container */
+.track-row .equalizer {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 18px;
+    width: 20px;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+/* Equalizer Bars */
+.eq-bar {
+    width: 3px;
+    background: linear-gradient(180deg, #1db954 0%, #1aa34a 100%);
+    border-radius: 2px;
+    height: 20%;
+    transform-origin: bottom;
+}
+
+/* 3. Active Playing State (Professional Highlight) */
+.track-row.is-playing {
+    background: rgba(29, 185, 84, 0.1) !important;
+    box-shadow: inset 4px 0 0 #1db954, 0 4px 20px rgba(29, 185, 84, 0.15);
+    transform: translateX(0);
+}
+
+.track-row.is-playing .track-name {
+    color: #1db954 !important;
+    font-weight: 600;
+}
+
+/* Equalizer Activation & Animation */
+.track-row.is-playing .equalizer {
+    opacity: 1;
+    visibility: visible;
+}
+
+.track-row.is-playing .eq-bar:nth-child(1) {
+    animation: eqBounce 0.7s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.track-row.is-playing .eq-bar:nth-child(2) {
+    animation: eqBounce 0.5s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.2s;
+}
+
+.track-row.is-playing .eq-bar:nth-child(3) {
+    animation: eqBounce 0.9s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95) 0.4s;
+}
+
+/* Smooth Equalizer Animation Keyframes */
+@keyframes eqBounce {
+    0% {
+        height: 15%;
+    }
+    50% {
+        height: 95%;
+    }
+    100% {
+        height: 40%;
+    }
+}
+
+/* 4. Audio Control Custom Alignment */
+.inline-audio {
+    height: 36px;
+    outline: none;
+    border-radius: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
     </style>
 </head>
 <body>
